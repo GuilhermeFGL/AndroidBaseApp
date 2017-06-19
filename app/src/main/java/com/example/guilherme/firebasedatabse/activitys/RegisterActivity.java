@@ -8,12 +8,11 @@ import android.widget.Toast;
 
 import com.example.guilherme.firebasedatabse.R;
 import com.example.guilherme.firebasedatabse.config.Firebase;
-import com.example.guilherme.firebasedatabse.helper.Preferences;
+import com.example.guilherme.firebasedatabse.helper.LocalPreferences;
 import com.example.guilherme.firebasedatabse.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
@@ -82,7 +81,8 @@ public class RegisterActivity extends AppCompatActivity {
                         FirebaseUser firebaseUser = task.getResult().getUser();
                         user.setId( firebaseUser.getUid() );
                         user.salvar();
-                        new Preferences().saveUser(user.getName(), user.getId());
+                        (new LocalPreferences(getBaseContext()))
+                                .saveUser(user.getName(), user.getId());
                         finish();
 
                     } else {

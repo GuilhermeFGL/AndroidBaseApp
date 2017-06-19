@@ -8,7 +8,7 @@ import android.widget.TextView;
 import com.example.guilherme.firebasedatabse.R;
 import com.example.guilherme.firebasedatabse.config.Constants;
 import com.example.guilherme.firebasedatabse.config.Firebase;
-import com.example.guilherme.firebasedatabse.helper.Preferences;
+import com.example.guilherme.firebasedatabse.helper.LocalPreferences;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,13 +24,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        userTextView.setText(new Preferences().getUser().get(Constants.USER_NAME));
+        userTextView.setText(
+                (new LocalPreferences(getBaseContext())).getUser().get(Constants.USER_NAME));
 
         verifyIsUserLogged();
     }
 
     private void verifyIsUserLogged() {
-        if (Firebase.getFirebaseAuth().getCurrentUser() != null) {
+        if (Firebase.getFirebaseAuth().getCurrentUser() == null) {
             startActivity(new Intent(this, LoginActivity.class));
         }
     }

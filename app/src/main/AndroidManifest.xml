@@ -2,7 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.guilherme.firebasedatabse">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
+        android:name=".FireBaseApplication"
         android:allowBackup="true"
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
@@ -29,6 +32,10 @@
             android:name=".activitys.ForgotPasswordActivity"
             android:label="@string/title_activity_forgot_password"
             android:theme="@style/AppTheme" />
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="aa336eaed17d098bca0d6e0f363901c5d1afdf48" />
     </application>
 
 </manifest>

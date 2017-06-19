@@ -1,0 +1,18 @@
+package com.example.guilherme.firebasedatabse;
+
+import android.app.Application;
+import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.ndk.CrashlyticsNdk;
+
+import io.fabric.sdk.android.Fabric;
+
+public class FireBaseApplication extends Application {
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        if (!BuildConfig.DEBUG) {
+            Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());
+        }
+    }
+}

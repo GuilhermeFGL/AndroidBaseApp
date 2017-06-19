@@ -6,8 +6,9 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorPrimary</item>
-        <item name="textColorPrimary">@color/textColorPrimary</item>
-        <item name="textColorSecondary">@color/textColorPrimaryLight</item>
+        <item name="android:textColor">@color/text_color_primary</item>
+        <item name="android:textColorPrimary">@color/text_color_primary</item>
+        <item name="android:textColorSecondary">@color/text_color_primary_light</item>
 
         <item name="android:buttonStyle">@style/ButtonDefault</item>
     </style>
@@ -19,11 +20,11 @@
 
     <style name="ButtonDefault" parent="Widget.AppCompat.Button.Colored">
         <item name="colorButtonNormal">@color/colorPrimary</item>
-        <item name="android:textColor">@color/textColorPrimaryLight</item>
+        <item name="android:textColor">@color/text_color_primary_light</item>
+        <item name="android:disabledAlpha">0.9</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>

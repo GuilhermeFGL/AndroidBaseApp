@@ -20,7 +20,7 @@
     <string name="login_action_register"><u>Registar-me</u></string>
 
     <!-- FORGOT PASSWORD ACTIVITY -->
-    <string name="title_activity_forgot_password">ForgotPasswordActivity</string>
+    <string name="title_activity_forgot_password">Esqueci minha senha</string>
     <string name="forgot_email">Se e-mail de acesso:</string>
     <string name="forgot_action">redefinir senha</string>
 
