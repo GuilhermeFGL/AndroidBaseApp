@@ -1,0 +1,15 @@
+package com.example.guilherme.firebasedatabse.config;
+
+/**
+ * Created by guilherme on 6/18/17.
+ */
+
+public class Constants {
+    public static final String PREFERENCES_NAME = "firebaseTeste.preferences";
+    public static final String USER_NAME = "nome";
+    public static final String USER_TOKEN = "token";
+
+    public static final class DATABASE_NODES {
+        public static final String USER = "users";
+    }
+}

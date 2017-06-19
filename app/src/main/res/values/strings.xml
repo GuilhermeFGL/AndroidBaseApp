@@ -1,0 +1,40 @@
+<resources>
+
+    <!-- MAIN ACTIVITY -->
+    <string name="app_name">Firebase Teste</string>
+
+    <!-- REGISTER ACTIVITY -->
+    <string name="title_activity_register">Cadastro</string>
+    <string name="register_name">Seu nome:</string>
+    <string name="register_email">Seu e-mail de login:</string>
+    <string name="register_email_confirm">Confirme seu e-mail:</string>
+    <string name="register_password">Sua senha de login:</string>
+    <string name="register_password_confirm">Confirme sua senha:</string>
+    <string name="register_action_register">cadastrar</string>
+
+    <!-- LOGIN ACTIVITY -->
+    <string name="title_activity_login">Login</string>
+    <string name="login_email">E-mail:</string>
+    <string name="login_password">Senha:</string>
+    <string name="login_action_login">entar</string>
+    <string name="login_action_register"><u>Registar-me</u></string>
+
+    <!-- FORGOT PASSWORD ACTIVITY -->
+    <string name="title_activity_forgot_password">ForgotPasswordActivity</string>
+    <string name="forgot_email">Se e-mail de acesso:</string>
+    <string name="forgot_action">redefinir senha</string>
+
+    <!-- TOAST MESSAGES -->
+    <string name="success_register">Usuário criado com sucesso</string>
+    <string name="success_forgot">E-mail para redefinir senha enviado</string>
+    <string name="error_login">Login inválido</string>
+    <string name="error_register_confirm_email">Confirme seu e-mail</string>
+    <string name="error_register_confirm_password">Confirme sua senha</string>
+    <string name="error_register_weak_password">Digite uma senha mais forte</string>
+    <string name="error_register_duplicate_email">Esse e-mail já foi cadastrado</string>
+    <string name="error_register_generic">Não foi possível realizar cadastro</string>
+    <string name="error_forgot">E-mail não encontrado</string>
+    <string name="login_forgot_password">Esqueci minha senha</string>
+    <string name="main_hello">Ola,</string>
+
+</resources>
