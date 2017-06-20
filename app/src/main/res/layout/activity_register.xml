@@ -24,6 +24,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
+            android:lines="1"
             android:paddingBottom="8dp" />
 
         <TextView
@@ -36,6 +37,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
+            android:lines="1"
             android:paddingBottom="8dp" />
 
         <TextView
@@ -48,6 +50,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
+            android:lines="1"
             android:paddingBottom="8dp" />
 
         <TextView
@@ -60,6 +63,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
+            android:lines="1"
             android:paddingBottom="8dp" />
 
         <TextView
@@ -71,7 +75,8 @@
             android:id="@+id/register_password_confirm"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:lines="1" />
 
     </LinearLayout>
 

@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private void verifyIsUserLogged() {
         if (Firebase.getFirebaseAuth().getCurrentUser() == null) {
             startActivity(new Intent(this, LoginActivity.class));
+            finish();
         }
     }
 }

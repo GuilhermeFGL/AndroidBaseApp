@@ -2,11 +2,8 @@ package com.example.guilherme.firebasedatabse.activitys;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,23 +33,39 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     @OnClick(R.id.forgot_action)
     public void sendEmail() {
-        Firebase.getFirebaseAuth().sendPasswordResetEmail(emailTextView.getText().toString())
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(ForgotPasswordActivity.this,
-                                    getString(R.string.success_forgot),
-                                    Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(ForgotPasswordActivity.this,
-                                    getString(R.string.error_forgot),
-                                    Toast.LENGTH_LONG).show();
+        String email = emailTextView.getText().toString();
+        if (!email.equals("")) {
+            Firebase.getFirebaseAuth().sendPasswordResetEmail(emailTextView.getText().toString())
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(ForgotPasswordActivity.this,
+                                        getString(R.string.success_forgot),
+                                        Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(ForgotPasswordActivity.this,
+                                        getString(R.string.error_forgot),
+                                        Toast.LENGTH_LONG).show();
+                            }
                         }
-                    }
-                });
+                    });
+        } else {
+            emailTextView.setError(getString(R.string.error_empty_required));
+        }
     }
 
 }

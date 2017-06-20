@@ -3,6 +3,7 @@ package com.example.guilherme.firebasedatabse.activitys;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,19 +50,44 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     @OnClick(R.id.register_action_register)
-    public void cadastrarUsuario(){
+    public void registerUser(){
+        boolean isValid = true;
+        if (nameTextView.getText().toString().equals("")) {
+            nameTextView.setError(getString(R.string.error_empty_required));
+            isValid = false;
+        }
+        if (emailTextView.getText().toString().equals("")) {
+            emailTextView.setError(getString(R.string.error_empty_required));
+            isValid = false;
+        }
+        if (passwordTextView.getText().toString().equals("")) {
+            passwordTextView.setError(getString(R.string.error_empty_required));
+            isValid = false;
+        }
         if (!emailTextView.getText().toString().equals(
                 emailConfirmTextView.getText().toString())) {
-            Toast.makeText(RegisterActivity.this,
-                    getString(R.string.error_register_confirm_email),
-                    Toast.LENGTH_LONG ).show();
-        } else if (!passwordTextView.getText().toString().equals(
+            emailConfirmTextView.setError(getString(R.string.error_register_confirm_email));
+            isValid = false;
+        }
+        if (!passwordTextView.getText().toString().equals(
                 passwordConfirmTextView.getText().toString())) {
-            Toast.makeText(RegisterActivity.this,
-                    getString(R.string.error_register_confirm_password),
-                    Toast.LENGTH_LONG ).show();
-        } else {
+            passwordConfirmTextView.setError(getString(R.string.error_register_confirm_password));
+            isValid = false;
+        }
+
+        if (isValid) {
             user = new User();
             user.setName(nameTextView.getText().toString() );
             user.setEmail(emailTextView.getText().toString());
@@ -79,7 +105,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 Toast.LENGTH_LONG ).show();
 
                         FirebaseUser firebaseUser = task.getResult().getUser();
-                        user.setId( firebaseUser.getUid() );
+                        user.setId(firebaseUser.getUid());
                         user.salvar();
                         (new LocalPreferences(getBaseContext()))
                                 .saveUser(user.getName(), user.getId());
@@ -92,8 +118,9 @@ public class RegisterActivity extends AppCompatActivity {
                             throw task.getException();
                         } catch (FirebaseAuthWeakPasswordException e) {
                             errorMessage = R.string.error_register_weak_password;
-                        } catch (FirebaseAuthInvalidCredentialsException
-                                | FirebaseAuthUserCollisionException e) {
+                        } catch (FirebaseAuthInvalidCredentialsException e) {
+                            errorMessage = R.string.error_register_invalid_email;
+                        } catch (FirebaseAuthUserCollisionException e) {
                             errorMessage = R.string.error_register_duplicate_email;
                         } catch (Exception e) {
                             errorMessage = R.string.error_register_generic;
