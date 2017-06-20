@@ -8,6 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.guilherme.firebasedatabse.R;
+import com.example.guilherme.firebasedatabse.components.ProgressDialog;
 import com.example.guilherme.firebasedatabse.config.Firebase;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -48,10 +49,15 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     public void sendEmail() {
         String email = emailTextView.getText().toString();
         if (!email.equals("")) {
+            final ProgressDialog dialog = new ProgressDialog(this);
+            dialog.show(getString(R.string.dialog_wait));
+
             Firebase.getFirebaseAuth().sendPasswordResetEmail(emailTextView.getText().toString())
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
+                            dialog.close();
+
                             if (task.isSuccessful()) {
                                 Toast.makeText(ForgotPasswordActivity.this,
                                         getString(R.string.success_forgot),

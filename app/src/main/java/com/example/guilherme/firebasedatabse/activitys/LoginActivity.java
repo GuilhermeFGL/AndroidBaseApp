@@ -8,6 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.guilherme.firebasedatabse.R;
+import com.example.guilherme.firebasedatabse.components.ProgressDialog;
 import com.example.guilherme.firebasedatabse.config.Constants;
 import com.example.guilherme.firebasedatabse.config.Firebase;
 import com.example.guilherme.firebasedatabse.helper.LocalPreferences;
@@ -60,12 +61,16 @@ public class LoginActivity extends AppCompatActivity {
         user.setPassword(passwordTextView.getText().toString());
 
         if (!user.getEmail().equals("") && !user.getPassword().equals("")) {
+            final ProgressDialog dialog = new ProgressDialog(this);
+            dialog.show(getString(R.string.dialog_wait));
+
             firebaseAuth.signInWithEmailAndPassword(
                     user.getEmail(),
                     user.getPassword()
             ).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
+                    dialog.close();
                     if (task.isSuccessful()) {
                         FirebaseUser firebaseUser = task.getResult().getUser();
                         DatabaseReference databaseUser = Firebase.getFirebaseDatabse();
@@ -110,8 +115,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void goToMainActivity(){
-        startActivity(new Intent(LoginActivity.this, MainActivity.class));
-        finish();
+        startActivity(new Intent(LoginActivity.this, MainActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
     }
 
 }

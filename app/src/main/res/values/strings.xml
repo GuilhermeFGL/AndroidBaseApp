@@ -1,5 +1,7 @@
 <resources>
 
+    <string name="dialog_wait">Aguarde…</string>
+
     <!-- MAIN ACTIVITY -->
     <string name="app_name">Firebase Teste</string>
 

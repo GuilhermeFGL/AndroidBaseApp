@@ -8,6 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.guilherme.firebasedatabse.R;
+import com.example.guilherme.firebasedatabse.components.ProgressDialog;
 import com.example.guilherme.firebasedatabse.config.Firebase;
 import com.example.guilherme.firebasedatabse.helper.LocalPreferences;
 import com.example.guilherme.firebasedatabse.model.User;
@@ -88,6 +89,10 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         if (isValid) {
+
+            final ProgressDialog dialog = new ProgressDialog(this);
+            dialog.show(getString(R.string.dialog_wait));
+
             user = new User();
             user.setName(nameTextView.getText().toString() );
             user.setEmail(emailTextView.getText().toString());
@@ -98,6 +103,8 @@ public class RegisterActivity extends AppCompatActivity {
                     .addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
+                    dialog.close();
+
                     if( task.isSuccessful() ){
 
                         Toast.makeText(RegisterActivity.this,
