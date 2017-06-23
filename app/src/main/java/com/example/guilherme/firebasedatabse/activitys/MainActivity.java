@@ -1,22 +1,54 @@
 package com.example.guilherme.firebasedatabse.activitys;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.guilherme.firebasedatabse.R;
+import com.example.guilherme.firebasedatabse.adapters.NavigationAdapter;
 import com.example.guilherme.firebasedatabse.config.Constants;
 import com.example.guilherme.firebasedatabse.config.Firebase;
+import com.example.guilherme.firebasedatabse.fragments.HomeFragment;
+import com.example.guilherme.firebasedatabse.fragments.ProfileFragment;
 import com.example.guilherme.firebasedatabse.helper.LocalPreferences;
+import com.example.guilherme.firebasedatabse.model.NavigationItem;
+import com.google.firebase.auth.FirebaseUser;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
-    @BindView(R.id.main_user_name)
-    TextView userTextView;
+    @BindView(R.id.navigation_menu)
+    LinearLayout navigationMenu;
+    @BindView(R.id.navigation_user_name)
+    TextView userName;
+    @BindView(R.id.navigation_user_email)
+    TextView userEmail;
+    @BindView(R.id.navigation_list)
+    ListView mMenuListView;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout mDrawerLayout;
+    @BindView(R.id.toolbar_main)
+    Toolbar mToolbar;
+
+    private NavigationAdapter navigationAdapter;
+    private FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,16 +56,99 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        userTextView.setText(
-                (new LocalPreferences(getBaseContext())).getUser().get(Constants.USER_NAME));
-
+        setNavigationDrawer();
+        navigationAdapter = new NavigationAdapter(this, NavigationItem.values());
+        mMenuListView.setAdapter(navigationAdapter);
+        mMenuListView.setOnItemClickListener(this);
+        mMenuListView.getAdapter()
+                .getView(NavigationItem.DIVIDER.position, null, mMenuListView)
+                .setEnabled(false);
+        openMenu(NavigationItem.HOME);
         verifyIsUserLogged();
+        if (currentUser != null) {
+            userEmail.setText(currentUser.getEmail());
+            userName.setText((new LocalPreferences(getBaseContext())
+                    .getUser().get(Constants.USER_NAME)));
+        }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        if (i != NavigationItem.DIVIDER.position) {
+            navigationAdapter.setPositionSelected(i);
+            navigationAdapter.notifyDataSetChanged();
+            openMenu((NavigationItem) mMenuListView.getItemAtPosition(i));
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        }
+    }
+
+    private void setNavigationDrawer() {
+        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(
+                this, mDrawerLayout, mToolbar, R.string.app_name, R.string.app_name);
+        mDrawerToggle.setDrawerIndicatorEnabled(true);
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
+        setSupportActionBar(mToolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+
+        }
+    }
+
+    public void openMenu(NavigationItem item) {
+        if (getSupportActionBar() != null) {
+            if (NavigationItem.HOME.equals(item)) {
+                getSupportActionBar().setTitle(R.string.navigation_home);
+                openFragment(new HomeFragment());
+            } else if (NavigationItem.PROFILE.equals(item)) {
+                mToolbar.setTitle(R.string.navigation_profile);
+                openFragment(new ProfileFragment());
+            } else if (NavigationItem.LOGOUT.equals(item)) {
+                dialogLogout();
+            }
+        }
+    }
+
+    public void openFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.content_view, fragment);
+        fragmentTransaction.commit();
+    }
+
+    private void dialogLogout() {
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+        alertBuilder.setMessage(R.string.dialog_logout);
+        alertBuilder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                logout();
+            }
+        });
+        alertBuilder.setNeutralButton(R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mDrawerLayout.closeDrawer(GravityCompat.START);
+            }
+        });
+        alertBuilder.show();
+    }
+
+    private void logout () {
+        Firebase.getFirebaseAuth().signOut();
+        (new LocalPreferences(getBaseContext())).logoutUser();
+        goToLogin();
     }
 
     private void verifyIsUserLogged() {
         if (Firebase.getFirebaseAuth().getCurrentUser() == null) {
-            startActivity(new Intent(this, LoginActivity.class));
-            finish();
+            goToLogin();
+        } else {
+            currentUser = Firebase.getFirebaseAuth().getCurrentUser();
         }
+    }
+
+    private void goToLogin() {
+        startActivity(new Intent(this, LoginActivity.class));
+        finish();
     }
 }

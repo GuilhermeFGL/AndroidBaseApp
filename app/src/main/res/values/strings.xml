@@ -1,6 +1,15 @@
 <resources>
 
     <string name="dialog_wait">Aguarde…</string>
+    <string name="menu_item">menu</string>
+
+    <string name="yes">Sim</string>
+    <string name="no">Não</string>
+
+    <!-- NAVIGATION -->
+    <string name="navigation_home">Página Inicial</string>
+    <string name="navigation_profile">Perfil</string>
+    <string name="navigation_logout">Sair</string>
 
     <!-- MAIN ACTIVITY -->
     <string name="app_name">Firebase Teste</string>
@@ -20,11 +29,15 @@
     <string name="login_password">Senha:</string>
     <string name="login_action_login">entar</string>
     <string name="login_action_register"><u>Registar-me</u></string>
+    <string name="login_forgot_password"><u>Esqueci minha senha</u></string>
 
     <!-- FORGOT PASSWORD ACTIVITY -->
     <string name="title_activity_forgot_password">Esqueci minha senha</string>
     <string name="forgot_email">Se e-mail de acesso:</string>
     <string name="forgot_action">redefinir senha</string>
+
+    <!-- DIALOG MESSAGES -->
+    <string name="dialog_logout">Tem certeza que deseja sair?</string>
 
     <!-- TOAST MESSAGES -->
     <string name="error_empty_required">Campo obrigatório</string>
@@ -38,7 +51,8 @@
     <string name="error_register_duplicate_email">Esse e-mail já foi cadastrado</string>
     <string name="error_register_generic">Não foi possível realizar cadastro</string>
     <string name="error_forgot">E-mail não encontrado</string>
-    <string name="login_forgot_password">Esqueci minha senha</string>
-    <string name="main_hello">Ola,</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
