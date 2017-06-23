@@ -83,15 +83,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void setNavigationDrawer() {
-        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(
-                this, mDrawerLayout, mToolbar, R.string.app_name, R.string.app_name);
-        mDrawerToggle.setDrawerIndicatorEnabled(true);
-        mDrawerLayout.addDrawerListener(mDrawerToggle);
         setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
         }
+        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(
+                this, mDrawerLayout, mToolbar, R.string.app_name, R.string.app_name);
+        mDrawerToggle.setDrawerIndicatorEnabled(true);
+        mDrawerToggle.syncState();
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
     }
 
     public void openMenu(NavigationItem item) {
