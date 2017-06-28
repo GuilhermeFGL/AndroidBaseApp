@@ -23,13 +23,13 @@ public class AskPasswordDialog extends Dialog {
         this.setContentView(R.layout.dialog_ask_password);
     }
 
-    public void show(final PositiveCallback positiveCallback, final NegativeCallback negativeCallback) {
+    public void show(final ActionCallback actionCallback) {
         this.findViewById(R.id.dialog_positive_button).setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         AskPasswordDialog.this.close();
-                        positiveCallback.onPositiveClick(
+                        actionCallback.onPositiveClick(
                                 ((TextView) AskPasswordDialog.this
                                         .findViewById(R.id.dialog_password))
                                         .getText().toString());
@@ -41,7 +41,7 @@ public class AskPasswordDialog extends Dialog {
                     @Override
                     public void onClick(View view) {
                         AskPasswordDialog.this.close();
-                        negativeCallback.onNegativeClick();
+                        actionCallback.onNegativeClick();
                     }
                 }
         );
@@ -54,11 +54,8 @@ public class AskPasswordDialog extends Dialog {
         }
     }
 
-    public interface PositiveCallback {
+    public interface ActionCallback {
         void onPositiveClick(String password);
-    }
-
-    public interface NegativeCallback {
         void onNegativeClick();
     }
 }

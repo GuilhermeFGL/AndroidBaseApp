@@ -73,7 +73,7 @@ public class ProfileFragment extends Fragment {
         if (isValid) {
             dialog.show(getString(R.string.dialog_wait));
             if (!passwordTextView.getText().toString().equals("")) {
-                new AskPasswordDialog(getActivity()).show(new AskPasswordDialog.PositiveCallback() {
+                new AskPasswordDialog(getActivity()).show(new AskPasswordDialog.ActionCallback() {
                     @Override
                     public void onPositiveClick(String password) {
                         if (!password.equals("")) {
@@ -82,7 +82,7 @@ public class ProfileFragment extends Fragment {
                             requestFeedBack(R.string.error_update_generic);
                         }
                     }
-                }, new AskPasswordDialog.NegativeCallback() {
+
                     @Override
                     public void onNegativeClick() {
                         dialog.close();
