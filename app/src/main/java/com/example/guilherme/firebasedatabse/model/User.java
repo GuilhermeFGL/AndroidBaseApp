@@ -1,9 +1,15 @@
 package com.example.guilherme.firebasedatabse.model;
 
+import android.support.annotation.NonNull;
+
 import com.example.guilherme.firebasedatabse.config.Constants;
 import com.example.guilherme.firebasedatabse.config.Firebase;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
+
+import java.util.concurrent.Callable;
 
 public class User {
 
@@ -14,9 +20,22 @@ public class User {
 
     public User() { }
 
-    public void salvar(){
-        DatabaseReference referenciaFirebase = Firebase.getFirebaseDatabse();
-        referenciaFirebase.child(Constants.DATABASE_NODES.USER).child(getId()).setValue(this);
+    public void save(){
+        Firebase.getFirebaseDatabse()
+                .child(Constants.DATABASE_NODES.USER).child(getId()).setValue(this);
+    }
+
+    public void save(final Callable<Void> callback){
+        Firebase.getFirebaseDatabse()
+                .child(Constants.DATABASE_NODES.USER).child(getId()).setValue(this)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        try {
+                            callback.call();
+                        } catch (Exception ignored) { }
+                    }
+                });
     }
 
     @Exclude

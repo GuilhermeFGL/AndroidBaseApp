@@ -64,12 +64,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 .getView(NavigationItem.DIVIDER.position, null, mMenuListView)
                 .setEnabled(false);
         openMenu(NavigationItem.HOME);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
         verifyIsUserLogged();
-        if (currentUser != null) {
-            userEmail.setText(currentUser.getEmail());
-            userName.setText((new LocalPreferences(getBaseContext())
-                    .getUser().get(Constants.USER_NAME)));
-        }
+        setUser();
     }
 
     @Override
@@ -107,6 +109,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             } else if (NavigationItem.LOGOUT.equals(item)) {
                 dialogLogout();
             }
+        }
+    }
+
+    public void setUser() {
+        if (currentUser != null) {
+            userEmail.setText(currentUser.getEmail());
+            userName.setText((new LocalPreferences(getBaseContext())
+                    .getUser().get(Constants.USER_NAME)));
         }
     }
 

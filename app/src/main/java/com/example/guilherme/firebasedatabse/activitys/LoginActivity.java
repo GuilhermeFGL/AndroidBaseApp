@@ -70,7 +70,6 @@ public class LoginActivity extends AppCompatActivity {
             ).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
-                    dialog.close();
                     if (task.isSuccessful()) {
                         FirebaseUser firebaseUser = task.getResult().getUser();
                         DatabaseReference databaseUser = Firebase.getFirebaseDatabse();
@@ -79,6 +78,7 @@ public class LoginActivity extends AppCompatActivity {
                                         new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
+                                        dialog.close();
                                         User user = dataSnapshot.getValue(User.class);
                                         (new LocalPreferences(getBaseContext()))
                                                 .saveUser(user.getName(), user.getId());

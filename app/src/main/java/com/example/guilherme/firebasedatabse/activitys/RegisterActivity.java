@@ -94,8 +94,8 @@ public class RegisterActivity extends AppCompatActivity {
             dialog.show(getString(R.string.dialog_wait));
 
             user = new User();
-            user.setName(nameTextView.getText().toString() );
-            user.setEmail(emailTextView.getText().toString());
+            user.setName(nameTextView.getText().toString().trim());
+            user.setEmail(emailTextView.getText().toString().trim());
             user.setPassword(passwordTextView.getText().toString());
 
             Firebase.getFirebaseAuth().createUserWithEmailAndPassword(
@@ -113,7 +113,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                         FirebaseUser firebaseUser = task.getResult().getUser();
                         user.setId(firebaseUser.getUid());
-                        user.salvar();
+                        user.save();
                         (new LocalPreferences(getBaseContext()))
                                 .saveUser(user.getName(), user.getId());
                         finish();

@@ -11,11 +11,16 @@
         <item name="android:textColorSecondary">@color/text_color_primary</item>
 
         <item name="android:buttonStyle">@style/ButtonDefault</item>
+        <item name="android:borderlessButtonStyle">@style/FlatButton</item>
     </style>
 
     <style name="AppTheme.NoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="FlatButton" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:textColor">@color/colorPrimary</item>
     </style>
 
     <style name="ButtonDefault" parent="Widget.AppCompat.Button.Colored">

@@ -36,13 +36,25 @@
     <string name="forgot_email">Se e-mail de acesso:</string>
     <string name="forgot_action">redefinir senha</string>
 
+    <!-- PROFILE FRAGMENT -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="profile_update_name">Alterar seu nome</string>
+    <string name="profile_update_password">Alterar sua senha *</string>
+    <string name="profile_update_label">* Não preencha se não for alterar</string>
+    <string name="profile_action_save">SALVAR</string>
+
     <!-- DIALOG MESSAGES -->
     <string name="dialog_logout">Tem certeza que deseja sair?</string>
+    <string name="dialog_aks_password_title">Credênciais</string>
+    <string name="dialog_aks_password_label">Senha de acesso:</string>
+    <string name="dialog_aks_password_yes">ENTRAR</string>
+    <string name="dialog_aks_password_no">CANCELAR</string>
 
     <!-- TOAST MESSAGES -->
     <string name="error_empty_required">Campo obrigatório</string>
     <string name="success_register">Usuário criado com sucesso</string>
     <string name="success_forgot">E-mail para redefinir senha enviado</string>
+    <string name="success_profile_update">Usuário atualizado com sucesso</string>
     <string name="error_login">Login inválido</string>
     <string name="error_register_confirm_email">Confirme seu e-mail</string>
     <string name="error_register_confirm_password">Confirme sua senha</string>
@@ -50,9 +62,7 @@
     <string name="error_register_invalid_email">E-mail inválido</string>
     <string name="error_register_duplicate_email">Esse e-mail já foi cadastrado</string>
     <string name="error_register_generic">Não foi possível realizar cadastro</string>
+    <string name="error_update_generic">Não foi possível atualizar cadastro</string>
     <string name="error_forgot">E-mail não encontrado</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
