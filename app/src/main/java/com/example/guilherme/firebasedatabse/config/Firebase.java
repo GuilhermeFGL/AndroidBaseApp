@@ -6,6 +6,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 public final class Firebase {
 
@@ -34,6 +36,10 @@ public final class Firebase {
         } else {
             return null;
         }
+    }
+
+    public static StorageReference getStorageReference(String name) {
+        return FirebaseStorage.getInstance().getReference(name);
     }
 
 }

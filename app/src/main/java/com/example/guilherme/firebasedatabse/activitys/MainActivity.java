@@ -3,6 +3,7 @@ package com.example.guilherme.firebasedatabse.activitys;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -25,30 +26,36 @@ import com.example.guilherme.firebasedatabse.config.Constants;
 import com.example.guilherme.firebasedatabse.config.Firebase;
 import com.example.guilherme.firebasedatabse.fragments.HomeFragment;
 import com.example.guilherme.firebasedatabse.fragments.ProfileFragment;
+import com.example.guilherme.firebasedatabse.helper.ImagePicker;
 import com.example.guilherme.firebasedatabse.helper.LocalPreferences;
 import com.example.guilherme.firebasedatabse.model.NavigationItem;
 import com.google.firebase.auth.FirebaseUser;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
+    @BindView(R.id.drawer_layout)
+    DrawerLayout mDrawerLayout;
+    @BindView(R.id.navigation_list)
+    ListView mMenuListView;
+    @BindView(R.id.toolbar_main)
+    Toolbar mToolbar;
     @BindView(R.id.navigation_menu)
     LinearLayout navigationMenu;
+    @BindView(R.id.navigation_user_pic)
+    CircleImageView avatarImageView;
     @BindView(R.id.navigation_user_name)
     TextView userName;
     @BindView(R.id.navigation_user_email)
     TextView userEmail;
-    @BindView(R.id.navigation_list)
-    ListView mMenuListView;
-    @BindView(R.id.drawer_layout)
-    DrawerLayout mDrawerLayout;
-    @BindView(R.id.toolbar_main)
-    Toolbar mToolbar;
 
     private NavigationAdapter navigationAdapter;
     private FirebaseUser currentUser;
+    private Fragment currentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,8 +87,27 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             navigationAdapter.setPositionSelected(i);
             navigationAdapter.notifyDataSetChanged();
             openMenu((NavigationItem) mMenuListView.getItemAtPosition(i));
-            mDrawerLayout.closeDrawer(GravityCompat.START);
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case Constants.PICK_IMAGE_FOR_PROFILE:
+                    ((ProfileFragment) currentFragment).setAvatar(
+                            ImagePicker.getImageFromResult(this, resultCode, data));
+                    break;
+                default:
+                    super.onActivityResult(requestCode, resultCode, data);
+                    break;
+            }
+        }
+    }
+
+    @OnClick(R.id.navigation_header_container)
+    public void goToProfile() {
+        openMenu(NavigationItem.PROFILE);
     }
 
     private void setNavigationDrawer() {
@@ -102,13 +128,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (getSupportActionBar() != null) {
             if (NavigationItem.HOME.equals(item)) {
                 getSupportActionBar().setTitle(R.string.navigation_home);
-                openFragment(new HomeFragment());
+                currentFragment = new HomeFragment();
+                openFragment(currentFragment);
             } else if (NavigationItem.PROFILE.equals(item)) {
                 mToolbar.setTitle(R.string.navigation_profile);
-                openFragment(new ProfileFragment());
+                currentFragment = new ProfileFragment();
+                openFragment(currentFragment);
             } else if (NavigationItem.LOGOUT.equals(item)) {
+                currentFragment = null;
                 dialogLogout();
             }
+            mDrawerLayout.closeDrawer(GravityCompat.START);
         }
     }
 

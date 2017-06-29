@@ -49,6 +49,7 @@
     <string name="dialog_aks_password_label">Senha de acesso:</string>
     <string name="dialog_aks_password_yes">ENTRAR</string>
     <string name="dialog_aks_password_no">CANCELAR</string>
+    <string name="pick_image_intent_text">Escolha uma imagem</string>
 
     <!-- TOAST MESSAGES -->
     <string name="error_empty_required">Campo obrigatório</string>

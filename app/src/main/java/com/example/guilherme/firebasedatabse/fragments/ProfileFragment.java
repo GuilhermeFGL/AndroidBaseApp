@@ -1,5 +1,7 @@
 package com.example.guilherme.firebasedatabse.fragments;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -15,23 +17,33 @@ import com.example.guilherme.firebasedatabse.components.AskPasswordDialog;
 import com.example.guilherme.firebasedatabse.components.ProgressDialog;
 import com.example.guilherme.firebasedatabse.config.Constants;
 import com.example.guilherme.firebasedatabse.config.Firebase;
+import com.example.guilherme.firebasedatabse.helper.ImagePicker;
 import com.example.guilherme.firebasedatabse.helper.LocalPreferences;
+import com.example.guilherme.firebasedatabse.model.Avatar;
 import com.example.guilherme.firebasedatabse.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileFragment extends Fragment {
 
+    @BindView(R.id.update_pic)
+    CircleImageView avatarImageView;
     @BindView(R.id.update_name)
     TextView nameTextView;
     @BindView(R.id.update_email)
@@ -43,6 +55,7 @@ public class ProfileFragment extends Fragment {
 
     private FirebaseUser firebaseUser;
     private ProgressDialog dialog;
+    private Bitmap avatarBitmap;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle instance) {
@@ -51,13 +64,20 @@ public class ProfileFragment extends Fragment {
 
         firebaseUser = Firebase.getFirebaseAuth().getCurrentUser();
         dialog = new ProgressDialog(getActivity());
+        avatarBitmap = null;
         setView();
 
         return view;
     }
 
+    @OnClick(R.id.update_pic)
+    public void pickImage() {
+        Intent chooseImageIntent = ImagePicker.getPickImageIntent(getActivity());
+        getActivity().startActivityForResult(chooseImageIntent, Constants.PICK_IMAGE_FOR_PROFILE);
+    }
+
     @OnClick(R.id.update_action_register)
-    public void updateUser(){
+    public void updateProfile(){
         boolean isValid = true;
         if (nameTextView.getText().toString().equals("")) {
             nameTextView.setError(getString(R.string.error_empty_required));
@@ -72,25 +92,7 @@ public class ProfileFragment extends Fragment {
 
         if (isValid) {
             dialog.show(getString(R.string.dialog_wait));
-            if (!passwordTextView.getText().toString().equals("")) {
-                new AskPasswordDialog(getActivity()).show(new AskPasswordDialog.ActionCallback() {
-                    @Override
-                    public void onPositiveClick(String password) {
-                        if (!password.equals("")) {
-                            updateUserPassword(password);
-                        } else {
-                            requestFeedBack(R.string.error_update_generic);
-                        }
-                    }
-
-                    @Override
-                    public void onNegativeClick() {
-                        dialog.close();
-                    }
-                });
-            } else {
-                updateUserName();
-            }
+            updateUserAvatar();
         }
     }
 
@@ -102,7 +104,58 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    private void updateUserPassword(String password) {
+    private void updateUserAvatar() {
+        if (avatarBitmap != null) {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            avatarBitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
+
+            Firebase.getStorageReference(firebaseUser.getUid().concat(".jpg"))
+                    .putBytes(outputStream.toByteArray())
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            requestFeedBack(R.string.error_update_generic);
+                        }
+                    }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    if (taskSnapshot.getDownloadUrl() != null) {
+                        Avatar avatar = new Avatar();
+                        avatar.setUserId(firebaseUser.getUid());
+                        avatar.setAvatarURL(taskSnapshot.getDownloadUrl().toString());
+                        avatar.save();
+                    }
+                    updateUserPassword();
+                }
+            });
+        } else {
+            updateUserPassword();
+        }
+    }
+
+    private void updateUserPassword() {
+        if (!passwordTextView.getText().toString().equals("")) {
+            new AskPasswordDialog(getActivity()).show(new AskPasswordDialog.ActionCallback() {
+                @Override
+                public void onPositiveClick(String password) {
+                    if (!password.equals("")) {
+                        requestUserPassword(password);
+                    } else {
+                        requestFeedBack(R.string.error_update_generic);
+                    }
+                }
+
+                @Override
+                public void onNegativeClick() {
+                    dialog.close();
+                }
+            });
+        } else {
+            updateUser();
+        }
+    }
+
+    private void requestUserPassword(String password) {
         AuthCredential authCredential = Firebase.getAuthCredential(password);
         if (authCredential != null) {
             firebaseUser.reauthenticate(authCredential).addOnCompleteListener(
@@ -115,7 +168,7 @@ public class ProfileFragment extends Fragment {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 if (task.isSuccessful()) {
-                                                    updateUserName();
+                                                    updateUser();
                                                 } else {
                                                     int errorMessage;
                                                     try {
@@ -139,7 +192,7 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    private void updateUserName() {
+    private void updateUser() {
         final String userName = nameTextView.getText().toString().trim();
         final String userEmail = emailTextView.getText().toString().trim();
 
@@ -169,6 +222,11 @@ public class ProfileFragment extends Fragment {
                 dialog.close();
             }
         }
+    }
+
+    public void setAvatar(Bitmap avatar) {
+        avatarBitmap = avatar;
+        avatarImageView.setImageBitmap(avatar);
     }
 
 }
