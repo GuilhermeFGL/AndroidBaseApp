@@ -37,10 +37,10 @@
     <string name="forgot_action">redefinir senha</string>
 
     <!-- PROFILE FRAGMENT -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="profile_update_pic">Alterar seu avatar</string>
     <string name="profile_update_name">Alterar seu nome</string>
     <string name="profile_update_password">Alterar sua senha *</string>
-    <string name="profile_update_label">* Não preencha se não for alterar</string>
+    <string name="profile_update_label">* Apenas preencha se for alterar</string>
     <string name="profile_action_save">SALVAR</string>
 
     <!-- DIALOG MESSAGES -->
@@ -64,5 +64,6 @@
     <string name="error_register_generic">Não foi possível realizar cadastro</string>
     <string name="error_update_generic">Não foi possível atualizar cadastro</string>
     <string name="error_forgot">E-mail não encontrado</string>
+    <string name="navigation_profile_pic">avatar do usuário</string>
 
 </resources>
