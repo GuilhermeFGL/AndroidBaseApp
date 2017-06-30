@@ -32,6 +32,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
@@ -105,14 +107,27 @@ public class ProfileFragment extends Fragment {
             nameTextView.setText(localUser.get(Constants.USER_NAME));
             emailTextView.setText(firebaseUser.getEmail());
 
-            String avatarUrl =
+            final String avatarUrl =
                     (new LocalPreferences(getContext())).getUser().get(Constants.USER_AVATAR);
             if (avatarUrl != null && !avatarUrl.equals("")) {
                 Picasso.with(getActivity())
                         .load(avatarUrl)
                         .fit()
                         .centerCrop()
-                        .into(avatarImageView);
+                        .into(avatarImageView, new Callback() {
+                            @Override
+                            public void onSuccess() {}
+
+                            @Override
+                            public void onError() {
+                                Picasso.with(getActivity())
+                                        .load(avatarUrl)
+                                        .fit()
+                                        .centerCrop()
+                                        .networkPolicy(NetworkPolicy.OFFLINE)
+                                        .into(avatarImageView);
+                            }
+                        });
             } else {
                 Firebase.getFirebaseDatabse().child(Constants.DATABASE_NODES.AVATAR)
                         .child(firebaseUser.getUid()).addListenerForSingleValueEvent(
