@@ -133,7 +133,8 @@ public class ProfileFragment extends Fragment {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             avatarBitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
 
-            Firebase.getStorageReference(firebaseUser.getUid().concat(".jpg"))
+            Firebase.getStorageReference(
+                    firebaseUser.getUid().concat(Constants.DEFAULT_IMAGE_EXTENSION))
                     .putBytes(outputStream.toByteArray())
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
