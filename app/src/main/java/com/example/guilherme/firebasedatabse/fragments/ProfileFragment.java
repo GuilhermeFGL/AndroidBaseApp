@@ -105,26 +105,36 @@ public class ProfileFragment extends Fragment {
             nameTextView.setText(localUser.get(Constants.USER_NAME));
             emailTextView.setText(firebaseUser.getEmail());
 
-            Firebase.getFirebaseDatabse().child(Constants.DATABASE_NODES.AVATAR)
-                    .child(firebaseUser.getUid()).addListenerForSingleValueEvent(
-                    new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            Avatar avatar = dataSnapshot.getValue(Avatar.class);
-                            if (avatar != null
-                                    && avatar.getAvatarURL() != null
-                                    && !avatar.getAvatarURL().equals("")) {
-                                Picasso.with(getActivity())
-                                        .load(avatar.getAvatarURL())
-                                        .fit()
-                                        .centerCrop()
-                                        .into(avatarImageView);
+            String avatarUrl =
+                    (new LocalPreferences(getContext())).getUser().get(Constants.USER_AVATAR);
+            if (avatarUrl != null && !avatarUrl.equals("")) {
+                Picasso.with(getActivity())
+                        .load(avatarUrl)
+                        .fit()
+                        .centerCrop()
+                        .into(avatarImageView);
+            } else {
+                Firebase.getFirebaseDatabse().child(Constants.DATABASE_NODES.AVATAR)
+                        .child(firebaseUser.getUid()).addListenerForSingleValueEvent(
+                        new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Avatar avatar = dataSnapshot.getValue(Avatar.class);
+                                if (avatar != null
+                                        && avatar.getAvatarURL() != null
+                                        && !avatar.getAvatarURL().equals("")) {
+                                    Picasso.with(getActivity())
+                                            .load(avatar.getAvatarURL())
+                                            .fit()
+                                            .centerCrop()
+                                            .into(avatarImageView);
+                                }
                             }
-                        }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) { }
-                    });
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) { }
+                        });
+            }
         }
     }
 

@@ -3,6 +3,8 @@ package com.example.guilherme.firebasedatabse.activitys;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -33,7 +35,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -68,12 +73,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         ButterKnife.bind(this);
 
         setNavigationDrawer();
-        navigationAdapter = new NavigationAdapter(this, NavigationItem.values());
-        mMenuListView.setAdapter(navigationAdapter);
-        mMenuListView.setOnItemClickListener(this);
-        mMenuListView.getAdapter()
-                .getView(NavigationItem.DIVIDER.position, null, mMenuListView)
-                .setEnabled(false);
+        setAvatar();
         openMenu(NavigationItem.HOME);
     }
 
@@ -126,6 +126,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mDrawerToggle.setDrawerIndicatorEnabled(true);
         mDrawerToggle.syncState();
         mDrawerLayout.addDrawerListener(mDrawerToggle);
+        navigationAdapter = new NavigationAdapter(this, NavigationItem.values());
+        mMenuListView.setAdapter(navigationAdapter);
+        mMenuListView.setOnItemClickListener(this);
+        mMenuListView.getAdapter()
+                .getView(NavigationItem.DIVIDER.position, null, mMenuListView)
+                .setEnabled(false);
     }
 
     public void openMenu(NavigationItem item) {
@@ -157,7 +163,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            setAvatar(dataSnapshot.getValue(Avatar.class));
+                            (new LocalPreferences(getBaseContext())).saveAvatar(
+                                    dataSnapshot.getValue(Avatar.class).getAvatarURL());
+                            setAvatar();
                         }
 
                         @Override
@@ -166,9 +174,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-    private void setAvatar(Avatar avatar) {
-        if (avatar != null && avatar.getAvatarURL() != null && !avatar.getAvatarURL().equals("")) {
-            Picasso.with(this).load(avatar.getAvatarURL()).fit().centerCrop().into(avatarImageView);
+    private void setAvatar() {
+        final String avatar = (new LocalPreferences(getBaseContext()).getUser().get(Constants.USER_AVATAR));
+        if (avatar != null && !avatar.equals("")) {
+            new RequestCachedAvatar().execute(avatar);
+            Picasso.with(this)
+                    .load(avatar)
+                    .fit()
+                    .centerCrop()
+                    .noPlaceholder()
+                    .into(avatarImageView);
         }
     }
 
@@ -214,5 +229,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void goToLogin() {
         startActivity(new Intent(this, LoginActivity.class));
         finish();
+    }
+
+    private class RequestCachedAvatar extends AsyncTask<String, Void, Void> {
+        @Override
+        protected Void doInBackground(String... strings) {
+            try {
+                final Bitmap avatarCached = Picasso.with(MainActivity.this)
+                                .load(strings[0])
+                                .networkPolicy(NetworkPolicy.OFFLINE)
+                                .get();
+                if (avatarCached != null) {
+                    MainActivity.this.runOnUiThread(new Runnable() {
+                        public void run() {
+                            avatarImageView.setImageBitmap(avatarCached);
+                        }
+                    });
+                }
+            } catch (IOException ignored) { }
+            return null;
+        }
     }
 }

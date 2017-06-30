@@ -18,10 +18,16 @@ public class LocalPreferences {
         preferences = this.context.getSharedPreferences(Constants.PREFERENCES_NAME, MODE);
     }
 
-    public void saveUser(String nome, String token ){
+    public void saveUser(String nome, String token){
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(Constants.USER_NAME, nome);
         editor.putString(Constants.USER_TOKEN, token);
+        editor.apply();
+    }
+
+    public void saveAvatar(String avatarUrl){
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(Constants.USER_AVATAR, avatarUrl);
         editor.apply();
     }
 
@@ -29,6 +35,7 @@ public class LocalPreferences {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(Constants.USER_NAME, null);
         editor.putString(Constants.USER_TOKEN, null);
+        editor.putString(Constants.USER_AVATAR, null);
         editor.apply();
     }
 
@@ -38,6 +45,8 @@ public class LocalPreferences {
                 preferences.getString(Constants.USER_NAME, null) );
         dadosUsuario.put(Constants.USER_TOKEN,
                 preferences.getString(Constants.USER_TOKEN, null));
+        dadosUsuario.put(Constants.USER_AVATAR,
+                preferences.getString(Constants.USER_AVATAR, null));
         return dadosUsuario;
     }
 
