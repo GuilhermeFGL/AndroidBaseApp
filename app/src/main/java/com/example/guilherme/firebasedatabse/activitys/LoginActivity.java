@@ -72,8 +72,7 @@ public class LoginActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
                         FirebaseUser firebaseUser = task.getResult().getUser();
-                        DatabaseReference databaseUser = Firebase.getFirebaseDatabse();
-                        databaseUser.child(Constants.DATABASE_NODES.USER)
+                        Firebase.getFirebaseDatabse().child(Constants.DATABASE_NODES.USER)
                                 .child(firebaseUser.getUid()).addListenerForSingleValueEvent(
                                         new ValueEventListener() {
                                     @Override

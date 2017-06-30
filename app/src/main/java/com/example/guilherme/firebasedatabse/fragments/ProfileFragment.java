@@ -28,8 +28,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
@@ -101,6 +104,27 @@ public class ProfileFragment extends Fragment {
         if (firebaseUser != null) {
             nameTextView.setText(localUser.get(Constants.USER_NAME));
             emailTextView.setText(firebaseUser.getEmail());
+
+            Firebase.getFirebaseDatabse().child(Constants.DATABASE_NODES.AVATAR)
+                    .child(firebaseUser.getUid()).addListenerForSingleValueEvent(
+                    new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Avatar avatar = dataSnapshot.getValue(Avatar.class);
+                            if (avatar != null
+                                    && avatar.getAvatarURL() != null
+                                    && !avatar.getAvatarURL().equals("")) {
+                                Picasso.with(getActivity())
+                                        .load(avatar.getAvatarURL())
+                                        .fit()
+                                        .centerCrop()
+                                        .into(avatarImageView);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) { }
+                    });
         }
     }
 

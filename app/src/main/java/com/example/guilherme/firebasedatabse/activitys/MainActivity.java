@@ -3,7 +3,6 @@ package com.example.guilherme.firebasedatabse.activitys;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -28,8 +27,13 @@ import com.example.guilherme.firebasedatabse.fragments.HomeFragment;
 import com.example.guilherme.firebasedatabse.fragments.ProfileFragment;
 import com.example.guilherme.firebasedatabse.helper.ImagePicker;
 import com.example.guilherme.firebasedatabse.helper.LocalPreferences;
+import com.example.guilherme.firebasedatabse.model.Avatar;
 import com.example.guilherme.firebasedatabse.model.NavigationItem;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -147,6 +151,24 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             userEmail.setText(currentUser.getEmail());
             userName.setText((new LocalPreferences(getBaseContext())
                     .getUser().get(Constants.USER_NAME)));
+
+            Firebase.getFirebaseDatabse().child(Constants.DATABASE_NODES.AVATAR)
+                    .child(currentUser.getUid()).addListenerForSingleValueEvent(
+                    new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            setAvatar(dataSnapshot.getValue(Avatar.class));
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) { }
+                    });
+        }
+    }
+
+    private void setAvatar(Avatar avatar) {
+        if (avatar != null && avatar.getAvatarURL() != null && !avatar.getAvatarURL().equals("")) {
+            Picasso.with(this).load(avatar.getAvatarURL()).fit().centerCrop().into(avatarImageView);
         }
     }
 
