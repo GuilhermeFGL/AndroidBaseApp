@@ -1,5 +1,6 @@
 package com.example.guilherme.firebasedatabse.activitys;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -52,6 +53,10 @@ public class RegisterActivity extends AppCompatActivity {
 
     private User user;
     private Bitmap avatarBitmap;
+
+    public static void startActivity(Context context) {
+        context.startActivity(new Intent(context, RegisterActivity.class));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -212,5 +217,4 @@ public class RegisterActivity extends AppCompatActivity {
         avatarBitmap = avatar;
         avatarImageView.setImageBitmap(avatar);
     }
-
 }

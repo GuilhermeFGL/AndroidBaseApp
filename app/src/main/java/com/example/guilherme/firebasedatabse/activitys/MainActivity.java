@@ -1,6 +1,7 @@
 package com.example.guilherme.firebasedatabse.activitys;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -65,6 +66,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private NavigationAdapter navigationAdapter;
     private FirebaseUser currentUser;
     private Fragment currentFragment;
+
+    public static void startActivity(Context context) {
+        context.startActivity(new Intent(context, MainActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -227,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void goToLogin() {
-        startActivity(new Intent(this, LoginActivity.class));
+        LoginActivity.startActivity(MainActivity.this);
         finish();
     }
 

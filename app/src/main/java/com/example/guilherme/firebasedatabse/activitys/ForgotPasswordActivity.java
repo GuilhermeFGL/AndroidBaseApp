@@ -1,5 +1,7 @@
 package com.example.guilherme.firebasedatabse.activitys;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +23,10 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
     @BindView(R.id.forgot_email)
     TextView emailTextView;
+
+    public static void startActivity(Context context) {
+        context.startActivity(new Intent(context, ForgotPasswordActivity.class));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,5 +79,4 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             emailTextView.setError(getString(R.string.error_empty_required));
         }
     }
-
 }

@@ -1,5 +1,6 @@
 package com.example.guilherme.firebasedatabse.activitys;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -20,7 +21,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import butterknife.BindView;
@@ -35,6 +35,11 @@ public class LoginActivity extends AppCompatActivity {
     TextView passwordTextView;
 
     private FirebaseAuth firebaseAuth;
+
+    public static void startActivity(Context context) {
+        context.startActivity(new Intent(context, LoginActivity.class)
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,17 +110,15 @@ public class LoginActivity extends AppCompatActivity {
 
     @OnClick(R.id.login_action_register)
     public void goToRegisterActivity(){
-        startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+        RegisterActivity.startActivity(LoginActivity.this);
     }
 
     @OnClick(R.id.login_forgot_password)
     public void goToForgotPasswordActivity() {
-        startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
+        ForgotPasswordActivity.startActivity(LoginActivity.this);
     }
 
     private void goToMainActivity(){
-        startActivity(new Intent(LoginActivity.this, MainActivity.class)
-                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+        MainActivity.startActivity(LoginActivity.this);
     }
-
 }
