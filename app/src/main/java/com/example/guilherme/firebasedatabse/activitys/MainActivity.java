@@ -150,6 +150,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 mToolbar.setTitle(R.string.navigation_profile);
                 currentFragment = new ProfileFragment();
                 openFragment(currentFragment);
+            } else if (NavigationItem.PREFERENCES.equals(item)) {
+                PreferencesActivity.startActivity(this);
             } else if (NavigationItem.LOGOUT.equals(item)) {
                 currentFragment = null;
                 dialogLogout();

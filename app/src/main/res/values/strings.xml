@@ -36,6 +36,28 @@
     <string name="forgot_email">Se e-mail de acesso:</string>
     <string name="forgot_action">redefinir senha</string>
 
+    <!-- PREFERENCES ACTIVITY -->
+    <string name="title_activity_preferences">Configurações</string>
+    <string name="pref_title_ringtone">Toque de notificação</string>
+    <string name="pref_ringtone_silent">Silêncioso</string>
+    <string name="pref_title_notifications">Notificações</string>
+    <string name="summary_choose_ringtone">Escolha o toque de notificação</string>
+    <string name="pref_header_about">Sobre</string>
+    <string name="title_send_feedback">Enviar comentário</string>
+    <string name="title_version">Versão</string>
+    <string name="title_new_notification_sound">Notificar novas mensagens</string>
+    <string name="title_vibrate">Vibração</string>
+    <string name="summary_vibrate">Vibrar ao receber notificação</string>
+    <string name="notifications_new_message">notifications_new_message</string>
+    <string name="key_notifications_new_message_ringtone">key_notifications_new_message_ringtone</string>
+    <string name="key_vibrate">key_vibrate</string>
+    <string name="key_send_feedback">key_send_feedback</string>
+    <string name="summary_support">Tem alguma dúvida? Estamos felizes em ajudar!</string>
+    <string name="choose_email_client">Escolha um serviço de e-mail</string>
+    <string name="about_developer">Página do desenvolvedor</string>
+    <string name="about_developer_url">https://guilhermefgl.wordpress.com/</string>
+
+
     <!-- PROFILE FRAGMENT -->
     <string name="profile_update_pic">Alterar seu avatar</string>
     <string name="profile_update_name">Alterar seu nome</string>
@@ -66,5 +88,11 @@
     <string name="error_update_generic">Não foi possível atualizar cadastro</string>
     <string name="error_forgot">E-mail não encontrado</string>
     <string name="navigation_profile_pic">avatar do usuário</string>
+
+    <!-- SERVICES -->
+    <string name="email_type">message/rfc822</string>
+    <string name="email_body_contact">"\n\n-----------------------------\nPor favor, não remover estas informações:\n Device OS: Android \n Device OS version: %1$s\n App Version: %2$s\n Device Brand: %3$s\n Device Model: %4$s\n Device Manufacturer: %5$s"</string>
+    <string name="email_sender_contact">guilherme_fgl@hotmail.com</string>
+    <string name="email_subject_contact">FireBaseTest - Contato</string>
 
 </resources>
