@@ -16,7 +16,7 @@ public class Avatar {
     public Avatar() { }
 
     public void save(){
-        Firebase.getFirebaseDatabse()
+        Firebase.getFirebaseDatabase()
                 .child(Constants.DATABASE_NODES.AVATAR).child(getUserId()).setValue(this);
     }
 

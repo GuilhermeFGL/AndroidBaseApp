@@ -41,11 +41,28 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
 
+        <activity
+            android:name=".activitys.PreferencesActivity"
+            android:label="@string/title_activity_preferences"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"/>
+
+        <service android:name=".services.FirebaseNotificationService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
+        <service android:name=".services.FirebaseRegisterService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="aa336eaed17d098bca0d6e0f363901c5d1afdf48" />
 
-        <activity android:name=".activitys.PreferencesActivity"></activity>
     </application>
 
 </manifest>

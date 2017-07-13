@@ -17,6 +17,7 @@ public class Constants {
 
     public static final class DATABASE_NODES {
         public static final String USER = "users";
+        public static final String TOKEN = "token";
         public static final String AVATAR = "avatars";
     }
 }

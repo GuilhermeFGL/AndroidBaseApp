@@ -129,7 +129,7 @@ public class ProfileFragment extends Fragment {
                             }
                         });
             } else {
-                Firebase.getFirebaseDatabse().child(Constants.DATABASE_NODES.AVATAR)
+                Firebase.getFirebaseDatabase().child(Constants.DATABASE_NODES.AVATAR)
                         .child(firebaseUser.getUid()).addListenerForSingleValueEvent(
                         new ValueEventListener() {
                             @Override

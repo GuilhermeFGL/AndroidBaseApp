@@ -166,14 +166,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             userName.setText((new LocalPreferences(getBaseContext())
                     .getUser().get(Constants.USER_NAME)));
 
-            Firebase.getFirebaseDatabse().child(Constants.DATABASE_NODES.AVATAR)
+            Firebase.getFirebaseDatabase().child(Constants.DATABASE_NODES.AVATAR)
                     .child(currentUser.getUid()).addListenerForSingleValueEvent(
                     new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            (new LocalPreferences(getBaseContext())).saveAvatar(
-                                    dataSnapshot.getValue(Avatar.class).getAvatarURL());
-                            setAvatar();
+                            if (dataSnapshot != null && dataSnapshot.getValue(Avatar.class) != null) {
+                                (new LocalPreferences(getBaseContext())).saveAvatar(
+                                        dataSnapshot.getValue(Avatar.class).getAvatarURL());
+                                setAvatar();
+                            }
                         }
 
                         @Override

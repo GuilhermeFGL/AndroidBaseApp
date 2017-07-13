@@ -20,21 +20,31 @@ public class User {
     public User() { }
 
     public void save(){
-        Firebase.getFirebaseDatabse()
+        Firebase.getFirebaseDatabase()
                 .child(Constants.DATABASE_NODES.USER).child(getId()).setValue(this);
+        saveToken();
     }
 
     public void save(final Callable<Void> callback){
-        Firebase.getFirebaseDatabse()
+        Firebase.getFirebaseDatabase()
                 .child(Constants.DATABASE_NODES.USER).child(getId()).setValue(this)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
+                        saveToken();
                         try {
                             callback.call();
                         } catch (Exception ignored) { }
                     }
                 });
+    }
+
+    public void saveToken() {
+        Firebase.getFirebaseDatabase()
+                .child(Constants.DATABASE_NODES.USER)
+                .child(getId())
+                .child(Constants.DATABASE_NODES.TOKEN)
+                .setValue(Firebase.getFirebaseId().getToken());
     }
 
     @Exclude

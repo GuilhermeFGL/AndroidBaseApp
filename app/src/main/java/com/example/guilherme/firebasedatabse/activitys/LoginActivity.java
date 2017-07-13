@@ -76,14 +76,16 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
-                        FirebaseUser firebaseUser = task.getResult().getUser();
-                        Firebase.getFirebaseDatabse().child(Constants.DATABASE_NODES.USER)
+                        final FirebaseUser firebaseUser = task.getResult().getUser();
+                        Firebase.getFirebaseDatabase().child(Constants.DATABASE_NODES.USER)
                                 .child(firebaseUser.getUid()).addListenerForSingleValueEvent(
                                         new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         dialog.close();
                                         User user = dataSnapshot.getValue(User.class);
+                                        user.setId(firebaseUser.getUid());
+                                        user.saveToken();
                                         (new LocalPreferences(getBaseContext()))
                                                 .saveUser(user.getName(), user.getId());
                                         goToMainActivity();
@@ -93,6 +95,7 @@ public class LoginActivity extends AppCompatActivity {
                                     public void onCancelled(DatabaseError databaseError) { }
                                 });
                     } else {
+                        dialog.close();
                         Toast.makeText(
                                 LoginActivity.this,
                                 getString(R.string.error_login),

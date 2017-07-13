@@ -6,6 +6,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -14,9 +15,10 @@ public final class Firebase {
     private static DatabaseReference databaseReference;
     private static FirebaseAuth firebaseAuth;
 
-    public static DatabaseReference getFirebaseDatabse(){
+    public static DatabaseReference getFirebaseDatabase(){
         if( databaseReference == null ){
-            databaseReference = FirebaseDatabase.getInstance().getReference();
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+            databaseReference =  FirebaseDatabase.getInstance().getReference();
         }
         return databaseReference;
     }
@@ -40,6 +42,10 @@ public final class Firebase {
 
     public static StorageReference getStorageReference(String name) {
         return FirebaseStorage.getInstance().getReference(name);
+    }
+
+    public static FirebaseInstanceId getFirebaseId() {
+        return FirebaseInstanceId.getInstance();
     }
 
 }
