@@ -2,7 +2,10 @@ package com.example.guilherme.firebasedatabse.helper;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
+import android.preference.PreferenceManager;
 
+import com.example.guilherme.firebasedatabse.R;
 import com.example.guilherme.firebasedatabse.config.Constants;
 
 import java.util.HashMap;
@@ -48,6 +51,22 @@ public class LocalPreferences {
         dadosUsuario.put(Constants.USER_AVATAR,
                 preferences.getString(Constants.USER_AVATAR, null));
         return dadosUsuario;
+    }
+
+    public String getRingtonePreferences() {
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(
+                context.getString(R.string.key_notifications_new_message_ringtone),
+                "DEFAULT_SOUND");
+    }
+
+    public boolean getVibratePreferences() {
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+                context.getString(R.string.key_vibrate), false);
+    }
+
+    public boolean getNotificationPreferences() {
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+                context.getString(R.string.notifications_new_message), false);
     }
 
 }

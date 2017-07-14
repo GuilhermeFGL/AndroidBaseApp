@@ -21,6 +21,7 @@
             android:key="@string/key_vibrate"
             android:summary="@string/summary_vibrate"
             android:title="@string/title_vibrate" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_header_about">
