@@ -13,6 +13,7 @@ import android.support.v4.content.ContextCompat;
 
 import com.example.guilherme.firebasedatabse.R;
 import com.example.guilherme.firebasedatabse.config.Constants;
+import com.example.guilherme.firebasedatabse.config.Firebase;
 import com.example.guilherme.firebasedatabse.helper.LocalPreferences;
 
 import org.json.JSONObject;
@@ -40,7 +41,7 @@ public class NotificationHandler {
     }
 
     public void showNotificationData(JSONObject data) {
-        if (preferences.getNotificationPreferences()) {
+        if (Firebase.isUserLoggedIn() && preferences.getNotificationPreferences()) {
             NotificationCompat.Builder notification = buildBaseNotification()
                     .setContentText(data.toString());
 

@@ -30,6 +30,10 @@ public final class Firebase {
         return firebaseAuth;
     }
 
+    public static boolean isUserLoggedIn() {
+        return getFirebaseAuth().getCurrentUser() != null;
+    }
+
     public static AuthCredential getAuthCredential(String password) {
         FirebaseUser firebaseUser = getFirebaseAuth().getCurrentUser();
         if (firebaseUser != null && firebaseUser.getEmail() != null) {

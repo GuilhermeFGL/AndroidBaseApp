@@ -61,12 +61,12 @@ public class LocalPreferences {
 
     public boolean getVibratePreferences() {
         return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
-                context.getString(R.string.key_vibrate), false);
+                context.getString(R.string.key_vibrate), true);
     }
 
     public boolean getNotificationPreferences() {
         return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
-                context.getString(R.string.notifications_new_message), false);
+                context.getString(R.string.notifications_new_message), true);
     }
 
 }
