@@ -11,6 +11,10 @@
     <string name="navigation_profile">Perfil</string>
     <string name="navigation_logout">Sair</string>
 
+    <!-- MENU -->
+    <string name="menu_register_register">CADASTRAR</string>
+    <string name="menu_profile_save">SALVAR</string>
+
     <!-- MAIN ACTIVITY -->
     <string name="app_name">Firebase Teste</string>
 

@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,10 +66,16 @@ public class RegisterActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         avatarBitmap = null;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.register_menu, menu);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+        return true;
     }
 
     @Override
@@ -76,6 +83,9 @@ public class RegisterActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
+                return true;
+            case R.id.menu_register_register:
+                registerUser();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -102,7 +112,6 @@ public class RegisterActivity extends AppCompatActivity {
         startActivityForResult(chooseImageIntent, Constants.PICK_IMAGE_FOR_REGISTER);
     }
 
-    @OnClick(R.id.register_action_register)
     public void registerUser(){
         boolean isValid = true;
         if (nameTextView.getText().toString().equals("")) {

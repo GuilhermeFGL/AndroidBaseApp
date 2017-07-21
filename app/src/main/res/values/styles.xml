@@ -1,14 +1,14 @@
 <resources>
 
-    <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+        <item name="android:scrollbarSize">4dp</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorPrimary</item>
         <item name="android:textColor">@color/text_color_primary</item>
         <item name="android:textColorPrimary">@color/text_color_primary</item>
         <item name="android:textColorSecondary">@color/text_color_primary</item>
+        <item name="android:scrollbarThumbVertical">@color/gray_light</item>
 
         <item name="android:buttonStyle">@style/ButtonDefault</item>
         <item name="android:borderlessButtonStyle">@style/FlatButton</item>

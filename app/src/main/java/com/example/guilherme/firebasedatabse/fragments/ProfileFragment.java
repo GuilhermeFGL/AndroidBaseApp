@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -70,9 +73,27 @@ public class ProfileFragment extends Fragment {
         firebaseUser = Firebase.getFirebaseAuth().getCurrentUser();
         dialog = new ProgressDialog(getActivity());
         avatarBitmap = null;
+        setHasOptionsMenu(true);
         setView();
 
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.profile_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_profile_save:
+                updateProfile();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @OnClick(R.id.update_pic)
@@ -81,7 +102,6 @@ public class ProfileFragment extends Fragment {
         getActivity().startActivityForResult(chooseImageIntent, Constants.PICK_IMAGE_FOR_PROFILE);
     }
 
-    @OnClick(R.id.update_action_register)
     public void updateProfile(){
         boolean isValid = true;
         if (nameTextView.getText().toString().equals("")) {
