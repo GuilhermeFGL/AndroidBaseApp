@@ -94,9 +94,11 @@
     <string name="navigation_profile_pic">avatar do usuário</string>
 
     <!-- SERVICES -->
-    <string name="email_body_contact">"\n\n-----------------------------\nPor favor, não remover essas informações:\n Device OS: Android \n Device OS version: %1$s\n App Version: %2$s\n Device Brand: %3$s\n Device Model: %4$s\n Device Manufacturer: %5$s"</string>
-    <string name="email_subject_contact">FireBaseTest - Contato</string>
     <string name="facebook_app_id">1546383518720699</string>
     <string name="fb_login_protocol_scheme">fb1546383518720699</string>
+    <string name="email_subject_contact">FireBaseTest - Contato</string>
+    <string name="email_body_contact">"\n\n-----------------------------\nPor favor, não remover essas informações:\n Device OS: Android \n Device OS version: %1$s\n App Version: %2$s\n Device Brand: %3$s\n Device Model: %4$s\n Device Manufacturer: %5$s"</string>
+
+
 
 </resources>

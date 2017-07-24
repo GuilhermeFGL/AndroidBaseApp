@@ -81,10 +81,8 @@ public class ImagePicker {
 
     private static File getTempFile(Context context) {
         File imageFile = new File(context.getExternalCacheDir(), TEMP_IMAGE_NAME);
-        if (imageFile.getParentFile().mkdirs()) {
-            return imageFile;
-        }
-        return null;
+        imageFile.getParentFile().mkdirs();
+        return imageFile;
     }
 
     private static Bitmap decodeBitmap(Context context, Uri theUri, int sampleSize) {
