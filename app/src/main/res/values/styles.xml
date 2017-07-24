@@ -29,6 +29,16 @@
         <item name="android:disabledAlpha">0.9</item>
     </style>
 
+    <style name="ButtonLoginFacebook" parent="Widget.AppCompat.Button.Colored">
+        <item name="colorButtonNormal">@color/facebook</item>
+        <item name="android:textColor">@color/text_color_primary_light</item>
+    </style>
+
+    <style name="ButtonLoginTwitter" parent="Widget.AppCompat.Button.Colored">
+        <item name="colorButtonNormal">@color/twitter</item>
+        <item name="android:textColor">@color/text_color_primary_light</item>
+    </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 

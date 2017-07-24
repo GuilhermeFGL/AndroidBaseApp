@@ -22,8 +22,7 @@ public class FirebaseNotificationService extends FirebaseMessagingService {
                             .showNotificationData(
                                     new JSONObject(remoteMessage.getData().toString())
                                             .getJSONObject("data"));
-                } catch (Exception ignored) {
-                }
+                } catch (Exception ignored) { }
             }
         }
     }

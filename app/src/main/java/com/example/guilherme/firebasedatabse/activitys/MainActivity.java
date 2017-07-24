@@ -32,6 +32,8 @@ import com.example.guilherme.firebasedatabse.helper.ImagePicker;
 import com.example.guilherme.firebasedatabse.helper.LocalPreferences;
 import com.example.guilherme.firebasedatabse.model.Avatar;
 import com.example.guilherme.firebasedatabse.model.NavigationItem;
+import com.facebook.login.LoginManager;
+import com.google.firebase.auth.FacebookAuthCredential;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -225,6 +227,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void logout () {
         Firebase.getFirebaseAuth().signOut();
         (new LocalPreferences(getBaseContext())).logoutUser();
+        LoginManager.getInstance().logOut();
         goToLogin();
     }
 

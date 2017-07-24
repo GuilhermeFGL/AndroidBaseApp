@@ -2,10 +2,6 @@ package com.example.guilherme.firebasedatabse.model;
 
 import com.example.guilherme.firebasedatabse.R;
 
-/**
- * Created by guilherme.lima on 22/06/2017.
- */
-
 public enum NavigationItem {
     HOME(R.drawable.ic_menu_home, R.string.navigation_home, 0),
     PROFILE(R.drawable.ic_menu_profile, R.string.navigation_profile, 1),

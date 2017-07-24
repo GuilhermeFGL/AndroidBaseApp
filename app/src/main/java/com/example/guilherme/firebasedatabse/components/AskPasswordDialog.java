@@ -8,10 +8,6 @@ import android.widget.TextView;
 
 import com.example.guilherme.firebasedatabse.R;
 
-/**
- * Created by guilherme.lima on 28/06/2017.
- */
-
 public class AskPasswordDialog extends Dialog {
 
     public AskPasswordDialog(@NonNull Context context) {
@@ -48,7 +44,7 @@ public class AskPasswordDialog extends Dialog {
         this.show();
     }
 
-    public void close() {
+    private void close() {
         if (this.isShowing()) {
             this.cancel();
         }

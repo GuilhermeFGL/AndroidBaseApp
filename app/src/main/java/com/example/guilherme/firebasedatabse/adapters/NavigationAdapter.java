@@ -16,10 +16,6 @@ import com.example.guilherme.firebasedatabse.model.NavigationItem;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * Created by guilherme.lima on 22/06/2017.
- */
-
 public class NavigationAdapter extends ArrayAdapter<NavigationItem> {
 
     private long positionSelected = 0;

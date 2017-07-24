@@ -89,10 +89,4 @@ public class NotificationHandler {
 
         return isInBackground;
     }
-
-    public static void clearNotifications(Context context) {
-        NotificationManager notificationManager =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancelAll();
-    }
 }

@@ -13,7 +13,6 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Parcelable;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import com.example.guilherme.firebasedatabse.R;
 
@@ -22,26 +21,14 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Author: Mario Velasco Casquero
- * Date: 08/09/2015
- * Email: m3ario@gmail.com
- * https://gist.github.com/Mariovc/f06e70ebe8ca52fbbbe2
- */
 public class ImagePicker {
 
-    private static final int DEFAULT_MIN_WIDTH_QUALITY = 400;        // min pixels
-    private static final String TAG = "ImagePicker";
+    private static final int DEFAULT_MIN_WIDTH_QUALITY = 500;
     private static final String TEMP_IMAGE_NAME = "tempImage";
-
-    public static int minWidthQuality = DEFAULT_MIN_WIDTH_QUALITY;
-
 
     public static Intent getPickImageIntent(Context context) {
         Intent chooserIntent = null;
-
         List<Intent> intentList = new ArrayList<>();
-
         Intent pickIntent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -66,28 +53,24 @@ public class ImagePicker {
             Intent targetedIntent = new Intent(intent);
             targetedIntent.setPackage(packageName);
             list.add(targetedIntent);
-            Log.d(TAG, "Intent: " + intent.getAction() + " package: " + packageName);
         }
         return list;
     }
 
-
     public static Bitmap getImageFromResult(Context context, int resultCode,
                                             Intent imageReturnedIntent) {
-        Log.d(TAG, "getImageFromResult, resultCode: " + resultCode);
         Bitmap bm = null;
         File imageFile = getTempFile(context);
-        if (resultCode == Activity.RESULT_OK) {
+        if (imageFile != null && resultCode == Activity.RESULT_OK) {
             Uri selectedImage;
             boolean isCamera = (imageReturnedIntent == null ||
                     imageReturnedIntent.getData() == null  ||
                     imageReturnedIntent.getData().toString().contains(imageFile.toString()));
-            if (isCamera) {     /** CAMERA **/
+            if (isCamera) {
                 selectedImage = Uri.fromFile(imageFile);
-            } else {            /** ALBUM **/
+            } else {
                 selectedImage = imageReturnedIntent.getData();
             }
-            Log.d(TAG, "selectedImage: " + selectedImage);
 
             bm = getImageResized(context, selectedImage);
             int rotation = getRotation(context, selectedImage, isCamera);
@@ -96,11 +79,12 @@ public class ImagePicker {
         return bm;
     }
 
-
     private static File getTempFile(Context context) {
         File imageFile = new File(context.getExternalCacheDir(), TEMP_IMAGE_NAME);
-        imageFile.getParentFile().mkdirs();
-        return imageFile;
+        if (imageFile.getParentFile().mkdirs()) {
+            return imageFile;
+        }
+        return null;
     }
 
     private static Bitmap decodeBitmap(Context context, Uri theUri, int sampleSize) {
@@ -114,27 +98,21 @@ public class ImagePicker {
             e.printStackTrace();
         }
 
-        Bitmap actuallyUsableBitmap = BitmapFactory.decodeFileDescriptor(
-                fileDescriptor.getFileDescriptor(), null, options);
-
-        Log.d(TAG, options.inSampleSize + " sample method bitmap ... " +
-                actuallyUsableBitmap.getWidth() + " " + actuallyUsableBitmap.getHeight());
-
-        return actuallyUsableBitmap;
+        if (fileDescriptor != null) {
+            return BitmapFactory.decodeFileDescriptor(
+                    fileDescriptor.getFileDescriptor(), null, options);
+        }
+        return null;
     }
 
-    /**
-     * Resize to avoid using too much memory loading big images (e.g.: 2560*1920)
-     **/
     private static Bitmap getImageResized(Context context, Uri selectedImage) {
-        Bitmap bm = null;
+        Bitmap bm;
         int[] sampleSizes = new int[]{5, 3, 2, 1};
         int i = 0;
         do {
             bm = decodeBitmap(context, selectedImage, sampleSizes[i]);
-            Log.d(TAG, "resizer: new bitmap width = " + bm.getWidth());
             i++;
-        } while (bm.getWidth() < minWidthQuality && i < sampleSizes.length);
+        } while (bm != null && bm.getWidth() < DEFAULT_MIN_WIDTH_QUALITY && i < sampleSizes.length);
         return bm;
     }
 
@@ -146,14 +124,12 @@ public class ImagePicker {
         } else {
             rotation = getRotationFromGallery(context, imageUri);
         }
-        Log.d(TAG, "Image rotation: " + rotation);
         return rotation;
     }
 
     private static int getRotationFromCamera(Context context, Uri imageFile) {
         int rotate = 0;
         try {
-
             context.getContentResolver().notifyChange(imageFile, null);
             ExifInterface exif = new ExifInterface(imageFile.getPath());
             int orientation = exif.getAttributeInt(
@@ -171,13 +147,11 @@ public class ImagePicker {
                     rotate = 90;
                     break;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception ignored) { }
         return rotate;
     }
 
-    public static int getRotationFromGallery(Context context, Uri imageUri) {
+    private static int getRotationFromGallery(Context context, Uri imageUri) {
         int result = 0;
         String[] columns = {MediaStore.Images.Media.ORIENTATION};
         Cursor cursor = null;
@@ -187,23 +161,20 @@ public class ImagePicker {
                 int orientationColumnIndex = cursor.getColumnIndex(columns[0]);
                 result = cursor.getInt(orientationColumnIndex);
             }
-        } catch (Exception e) {
-            //Do nothing
+        } catch (Exception ignored) {
         } finally {
             if (cursor != null) {
                 cursor.close();
             }
-        }//End of try-catch block
+        }
         return result;
     }
-
 
     private static Bitmap rotate(Bitmap bm, int rotation) {
         if (rotation != 0) {
             Matrix matrix = new Matrix();
             matrix.postRotate(rotation);
-            Bitmap bmOut = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, true);
-            return bmOut;
+            return Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, true);
         }
         return bm;
     }

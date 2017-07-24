@@ -13,10 +13,18 @@ import com.example.guilherme.firebasedatabse.components.ProgressDialog;
 import com.example.guilherme.firebasedatabse.config.Constants;
 import com.example.guilherme.firebasedatabse.config.Firebase;
 import com.example.guilherme.firebasedatabse.helper.LocalPreferences;
+import com.example.guilherme.firebasedatabse.model.Avatar;
 import com.example.guilherme.firebasedatabse.model.User;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -33,8 +41,11 @@ public class LoginActivity extends AppCompatActivity {
     TextView emailTextView;
     @BindView(R.id.login_password)
     TextView passwordTextView;
+    @BindView(R.id.login_facebook)
+    LoginButton facebookButton;
 
     private FirebaseAuth firebaseAuth;
+    private CallbackManager facebookCallback;
 
     public static void startActivity(Context context) {
         context.startActivity(new Intent(context, LoginActivity.class)
@@ -48,6 +59,8 @@ public class LoginActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         firebaseAuth = Firebase.getFirebaseAuth();
+        facebookCallback = CallbackManager.Factory.create();
+        setView();
     }
 
     @Override
@@ -57,6 +70,13 @@ public class LoginActivity extends AppCompatActivity {
         if (Firebase.getFirebaseAuth().getCurrentUser() != null) {
             goToMainActivity();
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        facebookCallback.onActivityResult(requestCode, resultCode, data);
     }
 
     @OnClick(R.id.login_action_login)
@@ -123,5 +143,64 @@ public class LoginActivity extends AppCompatActivity {
 
     private void goToMainActivity(){
         MainActivity.startActivity(LoginActivity.this);
+    }
+
+    private void setView() {
+        facebookButton.setReadPermissions(Constants.FACEBOOK_LOGIN);
+        facebookButton.registerCallback(facebookCallback, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                handleFacebookAccessToken(loginResult.getAccessToken());
+            }
+
+            @Override
+            public void onCancel() { }
+
+            @Override
+            public void onError(FacebookException error) {
+                Toast.makeText(LoginActivity.this,
+                        R.string.error_login_failed,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void handleFacebookAccessToken(AccessToken token) {
+        final ProgressDialog dialog = new ProgressDialog(this);
+        dialog.show(getString(R.string.dialog_wait));
+        firebaseAuth.signInWithCredential(FacebookAuthProvider.getCredential(token.getToken()))
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        dialog.close();
+                        if (task.isSuccessful()) {
+                            registerNewUserFromSocialLogin(firebaseAuth.getCurrentUser());
+                        } else {
+                            Toast.makeText(LoginActivity.this,
+                                    R.string.error_login,
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    private void registerNewUserFromSocialLogin(FirebaseUser firebaseUser) {
+        User user = new User();
+        user.setId(firebaseUser.getUid());
+        user.setName(firebaseUser.getDisplayName());
+        user.setEmail(firebaseUser.getEmail());
+        user.save();
+
+        if (firebaseUser.getPhotoUrl() != null) {
+            Avatar avatar = new Avatar();
+            avatar.setUserId(firebaseUser.getUid());
+            avatar.setAvatarURL(firebaseUser.getPhotoUrl().toString());
+            avatar.save();
+        }
+
+        (new LocalPreferences(getBaseContext()))
+                .saveUser(user.getName(), user.getId());
+
+        goToMainActivity();
     }
 }

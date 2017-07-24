@@ -13,7 +13,7 @@ public class AndroidPermissions {
 
     public static boolean checkPermissions(int requestCode, Activity activity, String[] requiredPermissions ){
         if(Build.VERSION.SDK_INT >= 23 ){
-            List<String> permissionsList = new ArrayList<String>();
+            List<String> permissionsList = new ArrayList<>();
 
             for(String permission : requiredPermissions ){
                 if (!(ContextCompat.checkSelfPermission(activity, permission)

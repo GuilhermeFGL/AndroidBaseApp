@@ -8,5 +8,8 @@
     <color name="text_color_primary_label">#616161</color>
     <color name="text_color_primary_light">#FAFAFA</color>
 
+    <color name="facebook">#3B5998</color>
+    <color name="twitter">#2AA9E0</color>
+
     <color name="gray_light">#BDBDBD</color>
 </resources>

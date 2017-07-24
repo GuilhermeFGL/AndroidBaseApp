@@ -8,10 +8,6 @@ import android.widget.TextView;
 
 import com.example.guilherme.firebasedatabse.R;
 
-/**
- * Created by guilherme.lima on 20/06/2017.
- */
-
 public class ProgressDialog extends Dialog {
 
     public ProgressDialog(@NonNull Context context) {

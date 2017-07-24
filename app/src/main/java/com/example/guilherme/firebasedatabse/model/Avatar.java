@@ -4,10 +4,6 @@ import com.example.guilherme.firebasedatabse.config.Constants;
 import com.example.guilherme.firebasedatabse.config.Firebase;
 import com.google.firebase.database.Exclude;
 
-/**
- * Created by guilherme.lima on 29/06/2017.
- */
-
 public class Avatar {
 
     private String userId;

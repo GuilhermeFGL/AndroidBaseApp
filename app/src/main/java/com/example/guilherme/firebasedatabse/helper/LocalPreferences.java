@@ -2,7 +2,6 @@ package com.example.guilherme.firebasedatabse.helper;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.preference.PreferenceManager;
 
 import com.example.guilherme.firebasedatabse.R;
@@ -13,12 +12,11 @@ import java.util.HashMap;
 public class LocalPreferences {
 
     private Context context;
-    private final int MODE = 0;
     private SharedPreferences preferences;
 
     public LocalPreferences(Context context){
         this.context = context;
-        preferences = this.context.getSharedPreferences(Constants.PREFERENCES_NAME, MODE);
+        preferences = this.context.getSharedPreferences(Constants.PREFERENCES_NAME, 0);
     }
 
     public void saveUser(String nome, String token){

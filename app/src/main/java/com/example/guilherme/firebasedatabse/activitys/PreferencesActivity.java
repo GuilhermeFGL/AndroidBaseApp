@@ -18,6 +18,7 @@ import android.view.MenuItem;
 
 import com.example.guilherme.firebasedatabse.R;
 import com.example.guilherme.firebasedatabse.components.AppCompatPreferenceActivity;
+import com.example.guilherme.firebasedatabse.config.Constants;
 
 public class PreferencesActivity extends AppCompatPreferenceActivity {
 
@@ -114,9 +115,9 @@ public class PreferencesActivity extends AppCompatPreferenceActivity {
         } catch (PackageManager.NameNotFoundException ignored) { }
 
         Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType(context.getString(R.string.email_type));
+        intent.setType(Constants.EMAIL_TYPE);
         intent.putExtra(Intent.EXTRA_EMAIL,
-                new String[]{context.getString(R.string.email_sender_contact)});
+                new String[]{Constants.EMAIL_SENDER});
         intent.putExtra(Intent.EXTRA_SUBJECT,
                 context.getString(R.string.email_subject_contact));
         intent.putExtra(Intent.EXTRA_TEXT, body);
