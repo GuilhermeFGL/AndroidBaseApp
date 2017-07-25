@@ -39,7 +39,7 @@ public class ImagePicker {
 
         if (intentList.size() > 0) {
             chooserIntent = Intent.createChooser(intentList.remove(intentList.size() - 1),
-                    context.getString(R.string.pick_image_intent_text));
+                    context.getString(R.string.dialog_pick_image_intent));
             chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentList.toArray(new Parcelable[]{}));
         }
 

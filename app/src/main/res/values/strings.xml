@@ -33,6 +33,7 @@
     <string name="login_action_login">entar</string>
     <string name="login_action_register"><u>Registar-me</u></string>
     <string name="login_forgot_password"><u>Esqueci minha senha</u></string>
+    <string name="login_action_login_google">Continuar com Google</string>
 
     <!-- FORGOT PASSWORD ACTIVITY -->
     <string name="title_activity_forgot_password">Esqueci minha senha</string>
@@ -74,7 +75,7 @@
     <string name="dialog_aks_password_label">Senha de acesso:</string>
     <string name="dialog_aks_password_yes">ENTRAR</string>
     <string name="dialog_aks_password_no">CANCELAR</string>
-    <string name="pick_image_intent_text">Escolha uma imagem</string>
+    <string name="dialog_pick_image_intent">Escolha uma imagem</string>
 
     <!-- TOAST MESSAGES -->
     <string name="error_empty_required">Campo obrigatório</string>
@@ -94,11 +95,13 @@
     <string name="navigation_profile_pic">avatar do usuário</string>
 
     <!-- SERVICES -->
-    <string name="facebook_app_id">1546383518720699</string>
-    <string name="fb_login_protocol_scheme">fb1546383518720699</string>
     <string name="email_subject_contact">FireBaseTest - Contato</string>
     <string name="email_body_contact">"\n\n-----------------------------\nPor favor, não remover essas informações:\n Device OS: Android \n Device OS version: %1$s\n App Version: %2$s\n Device Brand: %3$s\n Device Model: %4$s\n Device Manufacturer: %5$s"</string>
-    <string name="login_action_login_google">Continuar com Google</string>
+
+    <!-- KEYS -->
+    <string name="key_facebook_app_id">1546383518720699</string>
+    <string name="key_fb_login_protocol_scheme">fb1546383518720699</string>
+    <string name="key_crash_report">aa336eaed17d098bca0d6e0f363901c5d1afdf48</string>
 
 
 </resources>

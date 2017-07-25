@@ -18,23 +18,24 @@
 
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="aa336eaed17d098bca0d6e0f363901c5d1afdf48" />
+            android:value="@string/key_crash_report" />
+        <meta-data xmlns:tools="http://schemas.android.com/tools"
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/key_facebook_app_id"
+            tools:replace="android:value" />
 
-        <meta-data android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id"
-            xmlns:tools="http://schemas.android.com/tools"
-            tools:replace="android:value"/>
-
-        <activity
-            android:name=".activitys.MainActivity"
+        <activity android:name=".activitys.SplashActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".activitys.MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activitys.LoginActivity"
             android:label="@string/title_activity_login"
@@ -50,37 +51,36 @@
             android:label="@string/title_activity_forgot_password"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
-
         <activity
             android:name=".activitys.PreferencesActivity"
             android:label="@string/title_activity_preferences"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"/>
-
-        <activity android:name="com.facebook.FacebookActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
-
         <activity
             android:name="com.facebook.CustomTabActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="@string/fb_login_protocol_scheme" />
+
+                <data android:scheme="@string/key_fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
 
         <service android:name=".services.FirebaseNotificationService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
         <service android:name=".services.FirebaseRegisterService">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
 

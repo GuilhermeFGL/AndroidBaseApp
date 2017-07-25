@@ -1,5 +1,6 @@
 package com.example.guilherme.firebasedatabse.activitys;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -72,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public static void startActivity(Context context) {
         context.startActivity(new Intent(context, MainActivity.class)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+        ((Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
     @Override
