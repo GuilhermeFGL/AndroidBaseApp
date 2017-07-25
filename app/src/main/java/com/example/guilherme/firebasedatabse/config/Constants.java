@@ -11,6 +11,7 @@ public class Constants {
     public static final int PICK_IMAGE_FOR_PROFILE = 1001;
     public static final int PICK_IMAGE_FOR_REGISTER = 1002;
     public static final int NOTIFICATION_MESSAGE_ID = 1003;
+    public static final int RC_SIGN_IN = 1004;
 
     public static final String DEFAULT_IMAGE_EXTENSION = ".jpg";
 
