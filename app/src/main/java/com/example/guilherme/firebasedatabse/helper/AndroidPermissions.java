@@ -29,10 +29,10 @@ public class AndroidPermissions {
             String[] requestPermissions = new String[permissionsList.size()];
             permissionsList.toArray(requestPermissions);
             ActivityCompat.requestPermissions(activity, requestPermissions, requestCode);
+
+            return false;
         }
-
         return  true;
-
     }
 
 }

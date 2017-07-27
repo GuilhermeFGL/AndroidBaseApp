@@ -24,7 +24,6 @@
     <string name="register_email_confirm">Confirme seu e-mail:</string>
     <string name="register_password">Sua senha de login:</string>
     <string name="register_password_confirm">Confirme sua senha:</string>
-    <string name="register_action_register">cadastrar</string>
 
     <!-- LOGIN ACTIVITY -->
     <string name="title_activity_login">Login</string>
@@ -33,7 +32,6 @@
     <string name="login_action_login">entar</string>
     <string name="login_action_register"><u>Registar-me</u></string>
     <string name="login_forgot_password"><u>Esqueci minha senha</u></string>
-    <string name="login_action_login_google">Continuar com Google</string>
 
     <!-- FORGOT PASSWORD ACTIVITY -->
     <string name="title_activity_forgot_password">Esqueci minha senha</string>
@@ -67,7 +65,6 @@
     <string name="profile_update_name">Alterar seu nome</string>
     <string name="profile_update_password">Alterar sua senha *</string>
     <string name="profile_update_label">* Apenas preencha se for alterar</string>
-    <string name="profile_action_save">SALVAR</string>
 
     <!-- DIALOG MESSAGES -->
     <string name="dialog_logout">Tem certeza que deseja sair?</string>
