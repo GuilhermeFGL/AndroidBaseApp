@@ -7,6 +7,8 @@ public class Constants {
     public static final String USER_AVATAR = "avatar";
     public static final String EMAIL_TYPE = "message/rfc822";
     public static final String EMAIL_SENDER = "guilherme_fgl@hotmail.com";
+    public static final String NOTIFICATION_CHANNEL_MESSAGE_ID = "notification_message";
+    public static final String NOTIFICATION_CHANNEL_DATA_ID = "notification_data";
 
     public static final int PICK_IMAGE_FOR_PROFILE = 1001;
     public static final int PICK_IMAGE_FOR_REGISTER = 1002;

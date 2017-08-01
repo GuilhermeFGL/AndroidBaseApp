@@ -2,6 +2,7 @@ package com.example.guilherme.firebasedatabse.components;
 
 import android.app.ActivityManager;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -32,21 +33,47 @@ public class NotificationHandler {
 
     public void showNotificationMessage(final String message) {
         if (preferences.getNotificationPreferences()) {
-            NotificationCompat.Builder notification = buildBaseNotification()
-                    .setContentText(message);
-
-            ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE))
-                    .notify(Constants.NOTIFICATION_MESSAGE_ID, notification.build());
+            NotificationManager notificationManager =
+                    ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE));
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                NotificationChannel notificationChannel =
+                        new NotificationChannel(
+                                Constants.NOTIFICATION_CHANNEL_MESSAGE_ID,
+                                context.getString(R.string.notification_channel_message_title),
+                                NotificationManager.IMPORTANCE_DEFAULT);
+                notificationChannel.setDescription(message);
+                notificationChannel.setShowBadge(true);
+                notificationChannel.enableLights(true);
+                notificationChannel.enableVibration(preferences.getVibratePreferences());
+                notificationChannel.setLightColor(ContextCompat.getColor(context, R.color.colorPrimary));
+                notificationManager.createNotificationChannel(notificationChannel);
+            }
+            notificationManager.notify(Constants.NOTIFICATION_MESSAGE_ID, buildBaseNotification()
+                            .setContentText(message)
+                            .build());
         }
     }
 
     public void showNotificationData(JSONObject data) {
         if (Firebase.isUserLoggedIn() && preferences.getNotificationPreferences()) {
-            NotificationCompat.Builder notification = buildBaseNotification()
-                    .setContentText(data.toString());
-
-            ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE))
-                    .notify(0, notification.build());
+            NotificationManager notificationManager =
+                    ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE));
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                NotificationChannel notificationChannel =
+                        new NotificationChannel(
+                                Constants.NOTIFICATION_CHANNEL_DATA_ID,
+                                context.getString(R.string.notification_channel_data_title),
+                                NotificationManager.IMPORTANCE_HIGH);
+                notificationChannel.setDescription(data.toString());
+                notificationChannel.setShowBadge(true);
+                notificationChannel.enableLights(true);
+                notificationChannel.enableVibration(preferences.getVibratePreferences());
+                notificationChannel.setLightColor(ContextCompat.getColor(context, R.color.colorPrimary));
+                notificationManager.createNotificationChannel(notificationChannel);
+            }
+            notificationManager.notify(0, buildBaseNotification()
+                    .setContentText(data.toString())
+                    .build());
         }
     }
 

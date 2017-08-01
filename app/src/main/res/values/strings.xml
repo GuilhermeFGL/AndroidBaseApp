@@ -92,6 +92,8 @@
     <string name="navigation_profile_pic">avatar do usuário</string>
 
     <!-- SERVICES -->
+    <string name="notification_channel_message_title">Mensagem do sistema</string>
+    <string name="notification_channel_data_title">Mensagem com dados</string>
     <string name="email_subject_contact">FireBaseTest - Contato</string>
     <string name="email_body_contact">"\n\n-----------------------------\nPor favor, não remover essas informações:\n Device OS: Android \n Device OS version: %1$s\n App Version: %2$s\n Device Brand: %3$s\n Device Model: %4$s\n Device Manufacturer: %5$s"</string>
 
@@ -99,6 +101,5 @@
     <string name="key_facebook_app_id">1546383518720699</string>
     <string name="key_fb_login_protocol_scheme">fb1546383518720699</string>
     <string name="key_crash_report">aa336eaed17d098bca0d6e0f363901c5d1afdf48</string>
-
 
 </resources>
