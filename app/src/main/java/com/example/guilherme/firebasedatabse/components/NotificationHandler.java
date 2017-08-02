@@ -35,6 +35,9 @@ public class NotificationHandler {
         if (preferences.getNotificationPreferences()) {
             NotificationManager notificationManager =
                     ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE));
+            NotificationCompat.Builder notificationBuild = buildBaseNotification(
+                    Constants.NOTIFICATION_CHANNEL_MESSAGE_ID);
+
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 NotificationChannel notificationChannel =
                         new NotificationChannel(
@@ -46,11 +49,12 @@ public class NotificationHandler {
                 notificationChannel.enableLights(true);
                 notificationChannel.enableVibration(preferences.getVibratePreferences());
                 notificationChannel.setLightColor(ContextCompat.getColor(context, R.color.colorPrimary));
+
                 notificationManager.createNotificationChannel(notificationChannel);
             }
-            notificationManager.notify(Constants.NOTIFICATION_MESSAGE_ID, buildBaseNotification()
-                            .setContentText(message)
-                            .build());
+
+            notificationManager.notify(Constants.NOTIFICATION_MESSAGE_ID,
+                            notificationBuild.setContentText(message).build());
         }
     }
 
@@ -58,6 +62,9 @@ public class NotificationHandler {
         if (Firebase.isUserLoggedIn() && preferences.getNotificationPreferences()) {
             NotificationManager notificationManager =
                     ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE));
+            NotificationCompat.Builder notificationBuild = buildBaseNotification(
+                    Constants.NOTIFICATION_CHANNEL_DATA_ID);
+
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 NotificationChannel notificationChannel =
                         new NotificationChannel(
@@ -69,16 +76,16 @@ public class NotificationHandler {
                 notificationChannel.enableLights(true);
                 notificationChannel.enableVibration(preferences.getVibratePreferences());
                 notificationChannel.setLightColor(ContextCompat.getColor(context, R.color.colorPrimary));
+
                 notificationManager.createNotificationChannel(notificationChannel);
             }
-            notificationManager.notify(0, buildBaseNotification()
-                    .setContentText(data.toString())
-                    .build());
+
+            notificationManager.notify(0, notificationBuild.setContentText(data.toString()).build());
         }
     }
 
-    private NotificationCompat.Builder buildBaseNotification() {
-        NotificationCompat.Builder notification = new NotificationCompat.Builder(context)
+    private NotificationCompat.Builder buildBaseNotification(String channelId) {
+        NotificationCompat.Builder notification = new NotificationCompat.Builder(context, channelId)
                 .setContentTitle(context.getString(R.string.app_name))
                 .setSound(Uri.parse(preferences.getRingtonePreferences()))
                 .setStyle(new NotificationCompat.InboxStyle())
@@ -92,6 +99,7 @@ public class NotificationHandler {
         return notification;
     }
 
+    @SuppressWarnings("deprecation")
     public static boolean isAppIsInBackground(Context context) {
         boolean isInBackground = true;
         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
