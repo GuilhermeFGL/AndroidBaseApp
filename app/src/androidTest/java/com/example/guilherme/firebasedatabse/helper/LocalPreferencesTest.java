@@ -6,12 +6,16 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.example.guilherme.firebasedatabse.config.Constants;
 
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 public class LocalPreferencesTest {
@@ -19,14 +23,20 @@ public class LocalPreferencesTest {
     private Context appContext = InstrumentationRegistry.getTargetContext();
     private LocalPreferences preferences = new LocalPreferences(appContext);
 
+    @Before
+    public void setUser() {
+        preferences.saveUser("Nome", "email");
+        preferences.saveAvatar("URL Avatar");
+    }
+
     @Test
     public void getNotificationPreferences_assertDefaultValues() throws Exception {
-        assertEquals(true, preferences.getNotificationPreferences());
+        assertTrue(preferences.getNotificationPreferences());
     }
 
     @Test
     public void getVibratePreferences_assertDefaultValues() throws Exception {
-        assertEquals(true, preferences.getVibratePreferences());
+        assertTrue(preferences.getVibratePreferences());
     }
 
     @Test
@@ -36,9 +46,6 @@ public class LocalPreferencesTest {
 
     @Test
     public void saveUser_saveAvatar_verifySavedValues() throws Exception {
-        preferences.saveUser("Nome", "email");
-        preferences.saveAvatar("URL Avatar");
-
         HashMap<String, String> user = preferences.getUser();
         assertEquals("Nome", user.get(Constants.USER_NAME));
         assertEquals("email", user.get(Constants.USER_TOKEN));
@@ -50,8 +57,8 @@ public class LocalPreferencesTest {
         preferences.logoutUser();
 
         HashMap<String, String> user = preferences.getUser();
-        assertEquals(null, user.get(Constants.USER_NAME));
-        assertEquals(null, user.get(Constants.USER_TOKEN));
-        assertEquals(null, user.get(Constants.USER_AVATAR));
+        assertNull(user.get(Constants.USER_NAME));
+        assertNull(user.get(Constants.USER_TOKEN));
+        assertNull(user.get(Constants.USER_AVATAR));
     }
 }

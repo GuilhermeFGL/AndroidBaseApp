@@ -18,6 +18,7 @@ android {
     buildTypes {
         release {
             minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -31,6 +32,10 @@ android {
         exclude 'META-INF/license.txt'
         exclude 'META-INF/ASL2.0'
         exclude 'LICENSE.txt'
+    }
+
+    aaptOptions {
+        cruncherEnabled = false
     }
 }
 
