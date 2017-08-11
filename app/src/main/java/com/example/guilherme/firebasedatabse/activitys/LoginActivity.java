@@ -1,5 +1,6 @@
 package com.example.guilherme.firebasedatabse.activitys;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -59,8 +60,9 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthListener;
 
     public static void startActivity(Context context) {
-        context.startActivity(new Intent(context, LoginActivity.class)
-                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+        context.startActivity(new Intent(context, LoginActivity.class));
+        ((Activity) context).finish();
+        ((Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
     @Override

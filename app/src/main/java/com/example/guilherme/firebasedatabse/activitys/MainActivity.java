@@ -70,8 +70,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private Fragment currentFragment;
 
     public static void startActivity(Context context) {
-        context.startActivity(new Intent(context, MainActivity.class)
-                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+        context.startActivity(new Intent(context, MainActivity.class));
+        ((Activity) context).finish();
         ((Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 
@@ -242,7 +242,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private void goToLogin() {
         LoginActivity.startActivity(MainActivity.this);
-        finish();
     }
 
     private class RequestCachedAvatar extends AsyncTask<String, Void, Void> {
