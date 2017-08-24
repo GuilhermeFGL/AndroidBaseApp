@@ -1,5 +1,6 @@
 <resources>
 
+    <string name="app_name">Firebase Teste</string>
     <string name="dialog_wait">Aguarde…</string>
     <string name="yes">Sim</string>
     <string name="no">Não</string>
@@ -13,9 +14,6 @@
     <string name="menu_item">menu</string>
     <string name="menu_register_register">CADASTRAR</string>
     <string name="menu_profile_save">SALVAR</string>
-
-    <!-- MAIN ACTIVITY -->
-    <string name="app_name">Firebase Teste</string>
 
     <!-- REGISTER ACTIVITY -->
     <string name="title_activity_register">Cadastro</string>
@@ -96,6 +94,10 @@
     <string name="notification_channel_data_title">Mensagem com dados</string>
     <string name="email_subject_contact">FireBaseTest - Contato</string>
     <string name="email_body_contact">"\n\n-----------------------------\nPor favor, não remover essas informações:\n Device OS: Android \n Device OS version: %1$s\n App Version: %2$s\n Device Brand: %3$s\n Device Model: %4$s\n Device Manufacturer: %5$s"</string>
+
+    <!-- PINS -->
+    <string name="pin_preferences_shot_label">My Preferences</string>
+    <string name="pin_preferences_long_label">Open my preferences</string>
 
     <!-- KEYS -->
     <string name="key_facebook_app_id">1546383518720699</string>

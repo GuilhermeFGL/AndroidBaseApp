@@ -9,6 +9,7 @@ public class Constants {
     public static final String EMAIL_SENDER = "guilherme_fgl@hotmail.com";
     public static final String NOTIFICATION_CHANNEL_MESSAGE_ID = "notification_message";
     public static final String NOTIFICATION_CHANNEL_DATA_ID = "notification_data";
+    public static final String PIN_PREFERENCES = "pin_preferences";
 
     public static final int PICK_IMAGE_FOR_PROFILE = 1001;
     public static final int PICK_IMAGE_FOR_REGISTER = 1002;
@@ -18,6 +19,12 @@ public class Constants {
     public static final String DEFAULT_IMAGE_EXTENSION = ".jpg";
 
     public static final String[] FACEBOOK_LOGIN = new String[] {"email", "public_profile"};
+
+    public static final class BUNDLES {
+        public static final class MAIN {
+            public static final String CURRENT_FRAGMENT = "current_fragment";
+        }
+    }
 
     public static final class DATABASE_NODES {
         public static final String USER = "users";

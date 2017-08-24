@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.guilherme.firebasedatabse.FireBaseApplication;
 import com.example.guilherme.firebasedatabse.R;
 import com.example.guilherme.firebasedatabse.components.ProgressDialog;
 import com.example.guilherme.firebasedatabse.config.Constants;
@@ -63,6 +64,7 @@ public class LoginActivity extends AppCompatActivity {
         context.startActivity(new Intent(context, LoginActivity.class));
         ((Activity) context).finish();
         ((Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        ((FireBaseApplication) ((Activity) context).getApplication()).updateShortcuts();
     }
 
     @Override

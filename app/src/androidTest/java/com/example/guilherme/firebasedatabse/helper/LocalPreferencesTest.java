@@ -7,7 +7,6 @@ import android.support.test.runner.AndroidJUnit4;
 import com.example.guilherme.firebasedatabse.config.Constants;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

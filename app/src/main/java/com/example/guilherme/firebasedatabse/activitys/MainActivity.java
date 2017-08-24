@@ -7,7 +7,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -23,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.guilherme.firebasedatabse.FireBaseApplication;
 import com.example.guilherme.firebasedatabse.R;
 import com.example.guilherme.firebasedatabse.adapters.NavigationAdapter;
 import com.example.guilherme.firebasedatabse.config.Constants;
@@ -73,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         context.startActivity(new Intent(context, MainActivity.class));
         ((Activity) context).finish();
         ((Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        ((FireBaseApplication) ((Activity) context).getApplication()).updateShortcuts();
     }
 
     @Override
@@ -81,9 +85,24 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        NavigationItem currentFragment = NavigationItem.HOME;
+        if (getIntent().getExtras() != null && !getIntent().getExtras().isEmpty()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                PersistableBundle persistableBundle = getIntent()
+                        .getParcelableExtra(Constants.BUNDLES.MAIN.CURRENT_FRAGMENT);
+                if (persistableBundle != null && !persistableBundle.isEmpty()) {
+                    currentFragment = NavigationItem.valueOf(
+                            persistableBundle.getString(Constants.BUNDLES.MAIN.CURRENT_FRAGMENT));
+                }
+            }
+        }
+
         setNavigationDrawer();
         setAvatar();
-        openMenu(NavigationItem.HOME);
+        if (currentFragment == NavigationItem.PREFERENCES) {
+            openFragment(R.string.navigation_home, new HomeFragment());
+        }
+        openMenu(currentFragment);
     }
 
     @Override
@@ -144,22 +163,24 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     public void openMenu(NavigationItem item) {
+        if (NavigationItem.HOME.equals(item)) {
+            openFragment(R.string.navigation_home, new HomeFragment());
+        } else if (NavigationItem.PROFILE.equals(item)) {
+            openFragment(R.string.navigation_profile, new ProfileFragment());
+        } else if (NavigationItem.PREFERENCES.equals(item)) {
+            PreferencesActivity.startActivity(this);
+        } else if (NavigationItem.LOGOUT.equals(item)) {
+            currentFragment = null;
+            dialogLogout();
+        }
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+    }
+
+    private void openFragment(int title, Fragment fragment) {
         if (getSupportActionBar() != null) {
-            if (NavigationItem.HOME.equals(item)) {
-                getSupportActionBar().setTitle(R.string.navigation_home);
-                currentFragment = new HomeFragment();
-                openFragment(currentFragment);
-            } else if (NavigationItem.PROFILE.equals(item)) {
-                mToolbar.setTitle(R.string.navigation_profile);
-                currentFragment = new ProfileFragment();
-                openFragment(currentFragment);
-            } else if (NavigationItem.PREFERENCES.equals(item)) {
-                PreferencesActivity.startActivity(this);
-            } else if (NavigationItem.LOGOUT.equals(item)) {
-                currentFragment = null;
-                dialogLogout();
-            }
-            mDrawerLayout.closeDrawer(GravityCompat.START);
+            getSupportActionBar().setTitle(title);
+            currentFragment = fragment;
+            openFragment(currentFragment);
         }
     }
 
