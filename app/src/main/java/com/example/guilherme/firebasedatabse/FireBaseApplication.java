@@ -11,6 +11,7 @@ import android.os.PersistableBundle;
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.ndk.CrashlyticsNdk;
 import com.example.guilherme.firebasedatabse.activitys.MainActivity;
+import com.example.guilherme.firebasedatabse.activitys.SplashActivity;
 import com.example.guilherme.firebasedatabse.config.Constants;
 import com.example.guilherme.firebasedatabse.config.Firebase;
 import com.example.guilherme.firebasedatabse.model.NavigationItem;
@@ -46,15 +47,14 @@ public class FireBaseApplication extends Application {
 
     public void updateShortcuts() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
             if (Firebase.getFirebaseAuth().getCurrentUser() != null ) {
-                Intent preferencesPin = new Intent(getApplicationContext(), MainActivity.class);
+                Intent preferencesPin = new Intent(getApplicationContext(), SplashActivity.class);
                 PersistableBundle bundle = new PersistableBundle();
 
                 bundle.putString(Constants.BUNDLES.MAIN.CURRENT_FRAGMENT, NavigationItem.PREFERENCES.name());
                 preferencesPin.putExtra(Constants.BUNDLES.MAIN.CURRENT_FRAGMENT, bundle);
                 preferencesPin.setAction(Intent.ACTION_MAIN);
-                shortcutManager.setDynamicShortcuts(Collections.singletonList(
+                getSystemService(ShortcutManager.class).setDynamicShortcuts(Collections.singletonList(
                         new ShortcutInfo.Builder(this, Constants.PIN_PREFERENCES)
                                 .setShortLabel(getString(R.string.pin_preferences_shot_label))
                                 .setLongLabel(getString(R.string.pin_preferences_long_label))
@@ -63,7 +63,7 @@ public class FireBaseApplication extends Application {
                                 .setIntent(preferencesPin)
                                 .build()));
             } else {
-                shortcutManager.removeDynamicShortcuts(new ArrayList<String>() {{
+                getSystemService(ShortcutManager.class).removeDynamicShortcuts(new ArrayList<String>() {{
                     add(Constants.PIN_PREFERENCES);
                 }});
             }

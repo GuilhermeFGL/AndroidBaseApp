@@ -165,7 +165,6 @@ public class RegisterActivity extends AppCompatActivity {
                                 .saveUser(user.getName(), user.getId());
 
                         if (avatarBitmap != null) {
-
                             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                             avatarBitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
 
@@ -182,22 +181,20 @@ public class RegisterActivity extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                     dialog.close();
-                                    finish();
                                     if (taskSnapshot.getDownloadUrl() != null) {
                                         Avatar avatar = new Avatar();
                                         avatar.setUserId(firebaseUser.getUid());
                                         avatar.setAvatarURL(taskSnapshot.getDownloadUrl().toString());
                                         avatar.save();
                                     }
+                                    finish();
                                 }
                             });
                         } else {
                             dialog.close();
                             finish();
                         }
-
                     } else {
-
                         dialog.close();
                         int errorMessage;
                         try{
@@ -215,7 +212,6 @@ public class RegisterActivity extends AppCompatActivity {
                         Toast.makeText(RegisterActivity.this,
                                 getString(errorMessage),
                                 Toast.LENGTH_LONG ).show();
-
                     }
                 }
             });

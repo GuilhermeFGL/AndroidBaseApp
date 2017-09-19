@@ -7,9 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -73,7 +71,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private Fragment currentFragment;
 
     public static void startActivity(Context context) {
-        context.startActivity(new Intent(context, MainActivity.class));
+        startActivity(context, new Intent(context, MainActivity.class));
+    }
+
+    public static void startActivityWithBundle(Context context, Bundle bundle) {
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.putExtras(bundle);
+        startActivity(context, intent);
+    }
+
+    private static void startActivity(Context context, Intent intent) {
+        context.startActivity(intent);
         ((Activity) context).finish();
         ((Activity) context).overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         ((FireBaseApplication) ((Activity) context).getApplication()).updateShortcuts();
@@ -87,14 +95,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         NavigationItem currentFragment = NavigationItem.HOME;
         if (getIntent().getExtras() != null && !getIntent().getExtras().isEmpty()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                PersistableBundle persistableBundle = getIntent()
-                        .getParcelableExtra(Constants.BUNDLES.MAIN.CURRENT_FRAGMENT);
-                if (persistableBundle != null && !persistableBundle.isEmpty()) {
-                    currentFragment = NavigationItem.valueOf(
-                            persistableBundle.getString(Constants.BUNDLES.MAIN.CURRENT_FRAGMENT));
-                }
-            }
+            currentFragment = NavigationItem.valueOf(
+                    getIntent().getExtras().getString(Constants.BUNDLES.MAIN.CURRENT_FRAGMENT));
         }
 
         setNavigationDrawer();
