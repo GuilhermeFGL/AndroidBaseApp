@@ -21,6 +21,7 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
@@ -249,6 +250,7 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             registerNewUserFromSocialLogin(firebaseAuth.getCurrentUser());
                         } else {
+                            LoginManager.getInstance().logOut();
                             Toast.makeText(LoginActivity.this,
                                     R.string.error_login,
                                     Toast.LENGTH_SHORT).show();
@@ -268,6 +270,8 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             registerNewUserFromSocialLogin(firebaseAuth.getCurrentUser());
                         } else {
+                            dialog.close();
+                            LoginManager.getInstance().logOut();
                             Toast.makeText(LoginActivity.this,
                                     R.string.error_login,
                                     Toast.LENGTH_SHORT).show();

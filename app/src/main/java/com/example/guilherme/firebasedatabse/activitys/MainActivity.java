@@ -17,6 +17,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
@@ -30,6 +31,7 @@ import com.example.guilherme.firebasedatabse.config.Constants;
 import com.example.guilherme.firebasedatabse.config.Firebase;
 import com.example.guilherme.firebasedatabse.fragments.HomeFragment;
 import com.example.guilherme.firebasedatabse.fragments.ProfileFragment;
+import com.example.guilherme.firebasedatabse.fragments.TabbedFragment;
 import com.example.guilherme.firebasedatabse.helper.ImagePicker;
 import com.example.guilherme.firebasedatabse.helper.LocalPreferences;
 import com.example.guilherme.firebasedatabse.model.Avatar;
@@ -167,6 +169,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void openMenu(NavigationItem item) {
         if (NavigationItem.HOME.equals(item)) {
             openFragment(R.string.navigation_home, new HomeFragment());
+        } else if (NavigationItem.TABBED.equals(item)) {
+            openFragment(R.string.navigation_tabbed, new TabbedFragment());
         } else if (NavigationItem.PROFILE.equals(item)) {
             openFragment(R.string.navigation_profile, new ProfileFragment());
         } else if (NavigationItem.PREFERENCES.equals(item)) {
@@ -176,6 +180,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             dialogLogout();
         }
         mDrawerLayout.closeDrawer(GravityCompat.START);
+    }
+
+    public void openNavigationDrawer() {
+        mDrawerLayout.openDrawer(Gravity.LEFT);
     }
 
     private void openFragment(int title, Fragment fragment) {

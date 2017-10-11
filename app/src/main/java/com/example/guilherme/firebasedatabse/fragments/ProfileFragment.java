@@ -98,8 +98,8 @@ public class ProfileFragment extends Fragment {
 
     @OnClick(R.id.update_pic)
     public void pickImage() {
-        Intent chooseImageIntent = ImagePicker.getPickImageIntent(getActivity());
-        getActivity().startActivityForResult(chooseImageIntent, Constants.PICK_IMAGE_FOR_PROFILE);
+        getActivity().startActivityForResult(
+                ImagePicker.getPickImageIntent(getActivity()), Constants.PICK_IMAGE_FOR_PROFILE);
     }
 
     public void updateProfile(){

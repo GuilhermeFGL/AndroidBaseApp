@@ -7,6 +7,7 @@
 
     <!-- NAVIGATION -->
     <string name="navigation_home">Página Inicial</string>
+    <string name="navigation_tabbed">Tabelas</string>
     <string name="navigation_profile">Perfil</string>
     <string name="navigation_logout">Sair</string>
 
@@ -62,6 +63,11 @@
     <string name="profile_update_name">Alterar seu nome</string>
     <string name="profile_update_password">Alterar sua senha *</string>
     <string name="profile_update_label">* Apenas preencha se for alterar</string>
+
+    <!-- TABBED FRAGMENT -->
+    <string name="tabbed_navigation_description">navigation</string>
+    <string name="tabbed_list_title">Bacon</string>
+    <string name="tabbed_list_body">Bacon ipsum dolor amet pork belly meatball kevin spare ribs. Frankfurter swine corned beef meatloaf, strip steak.</string>
 
     <!-- DIALOG MESSAGES -->
     <string name="dialog_logout">Tem certeza que deseja sair?</string>
