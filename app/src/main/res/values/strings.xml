@@ -66,8 +66,11 @@
 
     <!-- TABBED FRAGMENT -->
     <string name="tabbed_navigation_description">navigation</string>
-    <string name="tabbed_list_title">Bacon</string>
-    <string name="tabbed_list_body">Bacon ipsum dolor amet pork belly meatball kevin spare ribs. Frankfurter swine corned beef meatloaf, strip steak.</string>
+    <string name="tabbed_list_title">Lorem ipsum</string>
+    <string name="tabbed_list_body">Lorem ipsum dolor sit amet, audiam omittam at duo. Vim ignota labitur corrumpit cu, vel ne audire regione oportere</string>
+    <string name="tabbed_view_1">Tabbed View 1</string>
+    <string name="tabbed_view_2">Tabbed View 2</string>
+    <string name="tabbed_view_3">Tabbed View 3</string>
 
     <!-- DIALOG MESSAGES -->
     <string name="dialog_logout">Tem certeza que deseja sair?</string>

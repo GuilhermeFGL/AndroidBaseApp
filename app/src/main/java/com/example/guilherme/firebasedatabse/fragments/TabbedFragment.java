@@ -2,21 +2,19 @@ package com.example.guilherme.firebasedatabse.fragments;
 
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.example.guilherme.firebasedatabse.R;
 import com.example.guilherme.firebasedatabse.activitys.MainActivity;
+import com.example.guilherme.firebasedatabse.adapters.ViewAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,8 +26,10 @@ public class TabbedFragment extends Fragment {
     CollapsingToolbarLayout actionBar;
     @BindView(R.id.tabbed_toolbar)
     Toolbar toolbar;
-    @BindView(R.id.tabbed_list_view)
-    RecyclerView list;
+    @BindView(R.id.tabbed_tab_layout)
+    TabLayout tabLayout;
+    @BindView(R.id.tabbed_view_page)
+    ViewPager viewPager;
 
     private ActionBar activityToolbar;
 
@@ -44,24 +44,8 @@ public class TabbedFragment extends Fragment {
         }
 
         actionBar.setTitle(getString(R.string.navigation_tabbed));
-        list.setLayoutManager(new LinearLayoutManager(getActivity()));
-        list.setAdapter(new RecyclerView.Adapter<ViewHolder>() {
-            @Override
-            public ViewHolder onCreateViewHolder(ViewGroup parent, int position) {
-                return new ViewHolder(getLayoutInflater().inflate(R.layout.list_item, parent, false));
-            }
-
-            @Override
-            public void onBindViewHolder(ViewHolder viewHolder, int position) {
-                viewHolder.text1.setText(getString(R.string.tabbed_list_title));
-                viewHolder.text2.setText(getString(R.string.tabbed_list_body));
-            }
-
-            @Override
-            public int getItemCount() {
-                return 15;
-            }
-        });
+        viewPager.setAdapter(new ViewAdapter(getChildFragmentManager(), getContext()));
+        tabLayout.setupWithViewPager(viewPager);
 
         return view;
     }
@@ -78,16 +62,5 @@ public class TabbedFragment extends Fragment {
     @OnClick(R.id.tabbed_navigation)
     public void openNavigationDrawer() {
         ((MainActivity)getActivity()).openNavigationDrawer();
-    }
-
-    private static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView text1;
-        TextView text2;
-
-        ViewHolder(View itemView) {
-            super(itemView);
-            text1 = itemView.findViewById(android.R.id.text1);
-            text2 = itemView.findViewById(android.R.id.text2);
-        }
     }
 }
