@@ -15,7 +15,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="aa336eaed17d098bca0d6e0f363901c5d1afdf48" />
@@ -24,11 +23,13 @@
             android:value="@string/key_facebook_app_id"
             tools:replace="android:value" />
 
-        <activity android:name=".activitys.SplashActivity"
+        <activity
+            android:name=".activitys.SplashActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -84,6 +85,7 @@
             </intent-filter>
         </service>
 
+        <activity android:name=".activitys.TransitionActivity"></activity>
     </application>
 
 </manifest>

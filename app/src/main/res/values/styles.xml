@@ -10,6 +10,7 @@
         <item name="android:textColorSecondary">@color/text_color_primary</item>
         <item name="colorButtonNormal">@color/text_color_primary</item>
         <item name="android:scrollbarThumbVertical">@color/gray_light</item>
+        <item name="android:windowContentTransitions">true</item>
 
         <item name="android:buttonStyle">@style/ButtonDefault</item>
         <item name="android:borderlessButtonStyle">@style/FlatButton</item>

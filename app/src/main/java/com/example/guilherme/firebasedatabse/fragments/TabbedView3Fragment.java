@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.guilherme.firebasedatabse.R;
+import com.example.guilherme.firebasedatabse.adapters.ListAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,35 +26,8 @@ public class TabbedView3Fragment extends Fragment {
         ButterKnife.bind(this, view);
 
         list.setLayoutManager(new LinearLayoutManager(getActivity()));
-        list.setAdapter(new RecyclerView.Adapter<TabbedView3Fragment.ViewHolder>() {
-            @Override
-            public TabbedView3Fragment.ViewHolder onCreateViewHolder(ViewGroup parent, int position) {
-                return new TabbedView3Fragment.ViewHolder(getLayoutInflater().inflate(R.layout.list_item, parent, false));
-            }
-
-            @Override
-            public void onBindViewHolder(TabbedView3Fragment.ViewHolder viewHolder, int position) {
-                viewHolder.text1.setText(getString(R.string.tabbed_list_title));
-                viewHolder.text2.setText(getString(R.string.tabbed_list_body));
-            }
-
-            @Override
-            public int getItemCount() {
-                return 15;
-            }
-        });
+        list.setAdapter(new ListAdapter());
 
         return view;
-    }
-
-    private static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView text1;
-        TextView text2;
-
-        ViewHolder(View itemView) {
-            super(itemView);
-            text1 = itemView.findViewById(android.R.id.text1);
-            text2 = itemView.findViewById(android.R.id.text2);
-        }
     }
 }

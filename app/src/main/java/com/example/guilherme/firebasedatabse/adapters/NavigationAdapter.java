@@ -21,7 +21,7 @@ public class NavigationAdapter extends ArrayAdapter<NavigationItem> {
     private long positionSelected = 0;
 
     public NavigationAdapter(Context context, NavigationItem[] items) {
-        super(context, R.layout.menu_item, items);
+        super(context, R.layout.item_menu, items);
     }
 
     public void setPositionSelected(long position){
@@ -35,7 +35,7 @@ public class NavigationAdapter extends ArrayAdapter<NavigationItem> {
         NavigationItem navigationItem = getItem(position);
         ViewHolder viewHolder;
         if (convertView == null) {
-            convertView = View.inflate(getContext(), R.layout.menu_item, null);
+            convertView = View.inflate(getContext(), R.layout.item_menu, null);
             viewHolder = new ViewHolder(convertView);
             convertView.setTag(viewHolder);
         } else {

@@ -1,6 +1,5 @@
 package com.example.guilherme.firebasedatabse.fragments;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;

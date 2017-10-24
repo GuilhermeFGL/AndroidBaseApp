@@ -58,6 +58,9 @@
     <string name="about_developer">Página do desenvolvedor</string>
     <string name="about_developer_url">https://guilhermefgl.wordpress.com/</string>
 
+    <!-- TRANSITION ACTIVITY -->
+    <string name="transition_image_description">image transition</string>
+
     <!-- PROFILE FRAGMENT -->
     <string name="profile_update_pic">Alterar seu avatar</string>
     <string name="profile_update_name">Alterar seu nome</string>
@@ -107,9 +110,15 @@
     <string name="pin_preferences_shot_label">Configuraçoes</string>
     <string name="pin_preferences_long_label">Abrir minhas configurações</string>
 
+    <!-- TRANSITIONS -->
+    <string name="transition_list_item_title">transition_list_item_title</string>
+    <string name="transition_list_item_image">transition_list_item_image</string>
+    <string name="transition_list_item_body">transition_list_item_body</string>
+
     <!-- KEYS -->
     <string name="key_facebook_app_id">1546383518720699</string>
     <string name="key_fb_login_protocol_scheme">fb1546383518720699</string>
     <string name="key_crash_report">aa336eaed17d098bca0d6e0f363901c5d1afdf48</string>
+
 
 </resources>
