@@ -17,6 +17,7 @@
         android:gravity="center|start">
 
         <TextView
+            android:labelFor="@+id/login_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/login_email"/>
@@ -30,6 +31,7 @@
             android:paddingBottom="8dp"/>
 
         <TextView
+            android:labelFor="@+id/login_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/login_password"/>

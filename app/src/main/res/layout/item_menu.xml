@@ -26,7 +26,6 @@
             android:id="@+id/menu_item_icon_image_view"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
             android:contentDescription="@string/menu_item"/>
 
@@ -35,7 +34,6 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:textSize="14sp"
-            android:layout_marginLeft="32dp"
             android:layout_marginStart="32dp"
             android:textColor="@color/text_color_primary"
             android:gravity="center|start" />

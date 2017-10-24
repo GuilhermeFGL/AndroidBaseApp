@@ -10,7 +10,6 @@ import android.os.PersistableBundle;
 
 import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.ndk.CrashlyticsNdk;
-import com.example.guilherme.firebasedatabse.activitys.MainActivity;
 import com.example.guilherme.firebasedatabse.activitys.SplashActivity;
 import com.example.guilherme.firebasedatabse.config.Constants;
 import com.example.guilherme.firebasedatabse.config.Firebase;
