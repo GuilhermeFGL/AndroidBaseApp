@@ -67,4 +67,14 @@ public class LocalPreferences {
                 context.getString(R.string.notifications_new_message), true);
     }
 
+    public boolean getUserFirstTime() {
+        boolean firstTime = preferences.getBoolean(Constants.USER_FIRST_TIME, false);
+        if (!firstTime) {
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean(Constants.USER_FIRST_TIME, true);
+            editor.apply();
+        }
+        return firstTime;
+    }
+
 }

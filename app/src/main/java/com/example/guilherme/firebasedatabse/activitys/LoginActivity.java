@@ -3,6 +3,7 @@ package com.example.guilherme.firebasedatabse.activitys;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -25,11 +26,19 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.credentials.Credential;
+import com.google.android.gms.auth.api.credentials.CredentialRequest;
+import com.google.android.gms.auth.api.credentials.CredentialRequestResult;
+import com.google.android.gms.auth.api.credentials.IdentityProviders;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -57,7 +66,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
     private CallbackManager facebookCallback;
-    private GoogleApiClient mGoogleApiClient;
+    private GoogleApiClient mSignInClient;
+    private GoogleApiClient mCredentialsClient;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
@@ -111,11 +121,19 @@ public class LoginActivity extends AppCompatActivity {
             if (result.isSuccess()) {
                 firebaseAuthWithGoogle(result.getSignInAccount());
             } else {
-                    Toast.makeText(LoginActivity.this,
-                            R.string.error_login_failed,
-                            Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this,
+                        R.string.error_login_failed,
+                        Toast.LENGTH_SHORT).show();
             }
-        } else {
+        } else if (requestCode == Constants.RC_READ) {
+            if (resultCode == RESULT_OK) {
+                onCredentialRetrieved((Credential) data.getParcelableExtra(Credential.EXTRA_KEY));
+            } else {
+                Toast.makeText(LoginActivity.this,
+                        R.string.error_login_failed,
+                        Toast.LENGTH_SHORT).show();
+            }
+        } else if (requestCode != Constants.RC_SAVE) {
             facebookCallback.onActivityResult(requestCode, resultCode, data);
         }
     }
@@ -125,56 +143,12 @@ public class LoginActivity extends AppCompatActivity {
         User user = new User();
         user.setEmail(emailTextView.getText().toString());
         user.setPassword(passwordTextView.getText().toString());
-
-        if (!user.getEmail().equals("") && !user.getPassword().equals("")) {
-            final ProgressDialog dialog = new ProgressDialog(this);
-            dialog.show(getString(R.string.dialog_wait));
-
-            firebaseAuth.signInWithEmailAndPassword(
-                    user.getEmail(),
-                    user.getPassword()
-            ).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
-                        final FirebaseUser firebaseUser = task.getResult().getUser();
-                        Firebase.getFirebaseDatabase().child(Constants.DATABASE_NODES.USER)
-                                .child(firebaseUser.getUid()).addListenerForSingleValueEvent(
-                                        new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        dialog.close();
-                                        User user = dataSnapshot.getValue(User.class);
-                                        user.setId(firebaseUser.getUid());
-                                        user.saveToken();
-                                        (new LocalPreferences(getBaseContext()))
-                                                .saveUser(user.getName(), user.getId());
-                                        goToMainActivity();
-                                    }
-
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) { }
-                                });
-                    } else {
-                        dialog.close();
-                        Toast.makeText(
-                                LoginActivity.this,
-                                getString(R.string.error_login),
-                                Toast.LENGTH_LONG ).show();
-                    }
-                }
-            });
-        } else {
-            Toast.makeText(
-                    LoginActivity.this,
-                    getString(R.string.error_login),
-                    Toast.LENGTH_LONG ).show();
-        }
+        loginWithAccount(user);
     }
 
     @OnClick(R.id.login_google)
     public void loginGoogle() {
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mSignInClient);
         startActivityForResult(signInIntent, Constants.RC_SIGN_IN);
     }
 
@@ -193,6 +167,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void setView() {
+        // google login
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -207,8 +182,8 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         };
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
+        mSignInClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, 0, new GoogleApiClient.OnConnectionFailedListener() {
                     @Override
                     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
                         Toast.makeText(LoginActivity.this,
@@ -219,6 +194,38 @@ public class LoginActivity extends AppCompatActivity {
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
+        // smart lock
+        mCredentialsClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, 1, new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                        Toast.makeText(LoginActivity.this,
+                                R.string.error_login_failed,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addApi(Auth.CREDENTIALS_API)
+                .build();
+        CredentialRequest mCredentialRequest = new CredentialRequest.Builder()
+                .setPasswordLoginSupported(true)
+                .setAccountTypes(IdentityProviders.GOOGLE, IdentityProviders.TWITTER)
+                .build();
+
+        if (! new LocalPreferences(getApplicationContext()).getUserFirstTime()) {
+            Auth.CredentialsApi.request(mCredentialsClient, mCredentialRequest).setResultCallback(
+                    new ResultCallback<CredentialRequestResult>() {
+                        @Override
+                        public void onResult(@NonNull CredentialRequestResult credentialRequestResult) {
+                            if (credentialRequestResult.getStatus().isSuccess()) {
+                                onCredentialRetrieved(credentialRequestResult.getCredential());
+                            } else {
+                                resolveResult(credentialRequestResult.getStatus());
+                            }
+                        }
+                    });
+        }
+
+        // facebook login
         facebookButton.setReadPermissions(Constants.FACEBOOK_LOGIN);
         facebookButton.registerCallback(facebookCallback, new FacebookCallback<LoginResult>() {
             @Override
@@ -238,6 +245,58 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    private void onCredentialRetrieved(Credential credential) {
+        String accountType = credential.getAccountType();
+        if (accountType == null) {
+            User user = new User();
+            user.setEmail(credential.getId());
+            user.setPassword(credential.getPassword());
+            loginWithAccount(user);
+        } else if (accountType.equals(IdentityProviders.GOOGLE)) {
+            GoogleSignInOptions gso =
+                    new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                            .requestIdToken(getString(R.string.default_web_client_id))
+                            .requestEmail()
+                            .setAccountName(credential.getId())
+                            .build();
+            GoogleApiClient signInClient = new GoogleApiClient.Builder(this)
+                    .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                    .enableAutoManage(this, 2, new GoogleApiClient.OnConnectionFailedListener() {
+                        @Override
+                        public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                            Toast.makeText(LoginActivity.this,
+                                    R.string.error_login_failed,
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .build();
+            OptionalPendingResult<GoogleSignInResult> pendingResult =
+                    Auth.GoogleSignInApi.silentSignIn(signInClient);
+            if (pendingResult.isDone()) {
+                firebaseAuthWithGoogle(pendingResult.get().getSignInAccount());
+            } else {
+                pendingResult.setResultCallback(new ResultCallback<GoogleSignInResult>() {
+                    @Override
+                    public void onResult(@NonNull GoogleSignInResult googleSignInResult) {
+                        firebaseAuthWithGoogle(googleSignInResult.getSignInAccount());
+                    }
+                });
+            }
+        }
+    }
+
+    private void resolveResult(Status status) {
+        if (status.getStatusCode() == CommonStatusCodes.RESOLUTION_REQUIRED) {
+            try {
+                status.startResolutionForResult(this, Constants.RC_READ);
+            } catch (IntentSender.SendIntentException e) {
+                Toast.makeText(LoginActivity.this,
+                        R.string.error_login_failed,
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         final ProgressDialog dialog = new ProgressDialog(this);
         dialog.show(getString(R.string.dialog_wait));
@@ -247,6 +306,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         dialog.close();
+                        saveUserCredentials(firebaseAuth.getCurrentUser());
                         if (task.isSuccessful()) {
                             registerNewUserFromSocialLogin(firebaseAuth.getCurrentUser());
                         } else {
@@ -278,6 +338,78 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    private void loginWithAccount(User user) {
+        if (!user.getEmail().equals("") && !user.getPassword().equals("")) {
+            final ProgressDialog dialog = new ProgressDialog(this);
+            dialog.show(getString(R.string.dialog_wait));
+
+            firebaseAuth.signInWithEmailAndPassword(
+                    user.getEmail(),
+                    user.getPassword()
+            ).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        final FirebaseUser firebaseUser = task.getResult().getUser();
+                        Firebase.getFirebaseDatabase().child(Constants.DATABASE_NODES.USER)
+                                .child(firebaseUser.getUid()).addListenerForSingleValueEvent(
+                                new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        dialog.close();
+                                        User user = dataSnapshot.getValue(User.class);
+                                        if (user != null) {
+                                            user.setId(firebaseUser.getUid());
+                                            user.saveToken();
+                                            (new LocalPreferences(getBaseContext()))
+                                                    .saveUser(user.getName(), user.getId());
+                                            goToMainActivity();
+                                        } else {
+                                            Toast.makeText(
+                                                    LoginActivity.this,
+                                                    getString(R.string.error_login),
+                                                    Toast.LENGTH_LONG ).show();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) { }
+                                });
+                    } else {
+                        dialog.close();
+                        Toast.makeText(
+                                LoginActivity.this,
+                                getString(R.string.error_login),
+                                Toast.LENGTH_LONG ).show();
+                    }
+                }
+            });
+        } else {
+            Toast.makeText(
+                    LoginActivity.this,
+                    getString(R.string.error_login),
+                    Toast.LENGTH_LONG ).show();
+        }
+    }
+
+    private void saveUserCredentials(FirebaseUser firebaseUser) {
+        Credential credential = new Credential.Builder(firebaseUser.getEmail())
+                .setAccountType(IdentityProviders.GOOGLE)
+                .setName(firebaseUser.getDisplayName())
+                .setProfilePictureUri(firebaseUser.getPhotoUrl())
+                .build();
+        Auth.CredentialsApi.save(mCredentialsClient, credential).setResultCallback(new ResultCallback<Status>() {
+            @Override
+            public void onResult(@NonNull Status status) {
+                if (!status.isSuccess() && status.hasResolution()) {
+                    try {
+                        status.startResolutionForResult(LoginActivity.this, Constants.RC_SAVE);
+                    } catch (IntentSender.SendIntentException ignored) { }
+                }
+            }
+        });
     }
 
     private void registerNewUserFromSocialLogin(FirebaseUser firebaseUser) {
