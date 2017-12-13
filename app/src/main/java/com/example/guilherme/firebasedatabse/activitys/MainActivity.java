@@ -2,12 +2,16 @@ package com.example.guilherme.firebasedatabse.activitys;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -36,6 +40,7 @@ import com.example.guilherme.firebasedatabse.helper.ImagePicker;
 import com.example.guilherme.firebasedatabse.helper.LocalPreferences;
 import com.example.guilherme.firebasedatabse.model.Avatar;
 import com.example.guilherme.firebasedatabse.model.NavigationItem;
+import com.example.guilherme.firebasedatabse.viewmodels.MainViewModel;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -43,6 +48,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.IOException;
 
@@ -69,8 +75,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     TextView userEmail;
 
     private NavigationAdapter navigationAdapter;
-    private FirebaseUser currentUser;
-    private Fragment currentFragment;
+    private MainViewModel mViewModel;
 
     public static void startActivity(Context context) {
         startActivity(context, new Intent(context, MainActivity.class));
@@ -93,7 +98,27 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         ButterKnife.bind(this);
+
+        mViewModel.getUser().observe(this, new Observer<FirebaseUser>() {
+            @Override
+            public void onChanged(@Nullable FirebaseUser firebaseUser) {
+                setUser(firebaseUser);
+            }
+        });
+        mViewModel.getCurrentFragment().observe(this, new Observer<Fragment>() {
+            @Override
+            public void onChanged(@Nullable Fragment fragment) {
+                openFragment(fragment);
+            }
+        });
+        mViewModel.getAvatar().observe(this, new Observer<Bitmap>() {
+            @Override
+            public void onChanged(@Nullable Bitmap bitmap) {
+                setAvatarView(bitmap);
+            }
+        });
 
         NavigationItem currentFragment = NavigationItem.HOME;
         if (getIntent().getExtras() != null && !getIntent().getExtras().isEmpty()) {
@@ -114,7 +139,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onResume();
 
         verifyIsUserLogged();
-        setUser();
     }
 
     @Override
@@ -131,12 +155,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case Constants.PICK_IMAGE_FOR_PROFILE:
-                    ((ProfileFragment) currentFragment).setAvatar(
-                            ImagePicker.getImageFromResult(this, resultCode, data));
+                    Fragment currentFragment = mViewModel.getCurrentFragment().getValue();
+                    if (currentFragment != null) {
+                        ((ProfileFragment) currentFragment).setAvatar(
+                                ImagePicker.getImageFromResult(this, resultCode, data));
+                    }
                     break;
                 default:
                     super.onActivityResult(requestCode, resultCode, data);
-                    break;
             }
         }
     }
@@ -176,25 +202,37 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         } else if (NavigationItem.PREFERENCES.equals(item)) {
             PreferencesActivity.startActivity(this);
         } else if (NavigationItem.LOGOUT.equals(item)) {
-            currentFragment = null;
+            mViewModel.setCurrentFragment(null);
             dialogLogout();
         }
         mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
     public void openNavigationDrawer() {
-        mDrawerLayout.openDrawer(Gravity.LEFT);
+        mDrawerLayout.openDrawer(Gravity.START);
     }
 
     private void openFragment(int title, Fragment fragment) {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(title);
-            currentFragment = fragment;
-            openFragment(currentFragment);
+            mViewModel.setCurrentFragment(fragment);
         }
     }
 
-    public void setUser() {
+    public void openFragment(Fragment fragment) {
+        if (fragment != null) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.content_view, fragment);
+            fragmentTransaction.commit();
+        }
+    }
+
+    public void requestUpdateUser() {
+        mViewModel.updateUser();
+    }
+
+    public void setUser(FirebaseUser currentUser) {
         if (currentUser != null) {
             userEmail.setText(currentUser.getEmail());
             userName.setText((new LocalPreferences(getBaseContext())
@@ -205,7 +243,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            if (dataSnapshot != null && dataSnapshot.getValue(Avatar.class) != null) {
+                            if (dataSnapshot != null
+                                    && dataSnapshot.getValue(Avatar.class) != null) {
                                 (new LocalPreferences(getBaseContext())).saveAvatar(
                                         dataSnapshot.getValue(Avatar.class).getAvatarURL());
                                 setAvatar();
@@ -224,18 +263,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             new RequestCachedAvatar().execute(avatar);
             Picasso.with(this)
                     .load(avatar)
-                    .fit()
-                    .centerCrop()
-                    .noPlaceholder()
-                    .into(avatarImageView);
-        }
-    }
+                    .into(new Target() {
+                        @Override
+                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                            mViewModel.setAvatar(bitmap);
+                        }
 
-    public void openFragment(Fragment fragment) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.content_view, fragment);
-        fragmentTransaction.commit();
+                        @Override
+                        public void onBitmapFailed(Drawable errorDrawable) { }
+
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) { }
+                    });
+        }
     }
 
     private void dialogLogout() {
@@ -266,8 +306,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void verifyIsUserLogged() {
         if (Firebase.getFirebaseAuth().getCurrentUser() == null) {
             goToLogin();
-        } else {
-            currentUser = Firebase.getFirebaseAuth().getCurrentUser();
+        }
+    }
+
+    private void setAvatarView(Bitmap bitmap) {
+        if (bitmap != null) {
+            avatarImageView.setImageBitmap(bitmap);
         }
     }
 
@@ -286,7 +330,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 if (avatarCached != null) {
                     MainActivity.this.runOnUiThread(new Runnable() {
                         public void run() {
-                            avatarImageView.setImageBitmap(avatarCached);
+                            mViewModel.setAvatar(avatarCached);
                         }
                     });
                 }

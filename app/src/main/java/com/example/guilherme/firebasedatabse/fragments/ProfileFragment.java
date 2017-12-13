@@ -1,8 +1,12 @@
 package com.example.guilherme.firebasedatabse.fragments;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,6 +27,7 @@ import com.example.guilherme.firebasedatabse.helper.ImagePicker;
 import com.example.guilherme.firebasedatabse.helper.LocalPreferences;
 import com.example.guilherme.firebasedatabse.model.Avatar;
 import com.example.guilherme.firebasedatabse.model.User;
+import com.example.guilherme.firebasedatabse.viewmodels.ProfileViewModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -34,12 +39,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
 import java.util.concurrent.Callable;
 
 import butterknife.BindView;
@@ -60,21 +63,36 @@ public class ProfileFragment extends Fragment {
     @BindView(R.id.update_password_confirm)
     TextView passwordConfirmTextView;
 
-    private FirebaseUser firebaseUser;
     private ProgressDialog dialog;
-    private Bitmap avatarBitmap;
+    private ProfileViewModel mViewModel;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle instance) {
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mViewModel = ViewModelProviders.of(this).get(ProfileViewModel.class);
+        mViewModel.getUser().observe(this, new Observer<FirebaseUser>() {
+            @Override
+            public void onChanged(@Nullable FirebaseUser firebaseUser) {
+                setUserView(firebaseUser);
+            }
+        });
+        mViewModel.getAvatarBitmap().observe(this, new Observer<Bitmap>() {
+            @Override
+            public void onChanged(@Nullable Bitmap bitmap) {
+                setAvatarView(bitmap);
+            }
+        });
+        loadAvatarFromStorage();
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle instance) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
         ButterKnife.bind(this, view);
-
-        firebaseUser = Firebase.getFirebaseAuth().getCurrentUser();
-        dialog = new ProgressDialog(getActivity());
-        avatarBitmap = null;
-        setHasOptionsMenu(true);
-        setView();
-
+        if (getActivity() != null) {
+            dialog = new ProgressDialog(getActivity());
+            setHasOptionsMenu(true);
+        }
         return view;
     }
 
@@ -97,8 +115,69 @@ public class ProfileFragment extends Fragment {
 
     @OnClick(R.id.update_pic)
     public void pickImage() {
-        getActivity().startActivityForResult(
-                ImagePicker.getPickImageIntent(getActivity()), Constants.PICK_IMAGE_FOR_PROFILE);
+        if (getActivity() != null) {
+            getActivity().startActivityForResult(
+                    ImagePicker.getPickImageIntent(getActivity()), Constants.PICK_IMAGE_FOR_PROFILE);
+        }
+    }
+
+    private void setUserView(FirebaseUser firebaseUser) {
+        if (firebaseUser != null) {
+            nameTextView.setText(firebaseUser.getDisplayName());
+            emailTextView.setText(firebaseUser.getEmail());
+        }
+    }
+
+    public void setAvatarView(Bitmap avatar) {
+        if (avatar != null) {
+            avatarImageView.setImageBitmap(avatar);
+        }
+    }
+
+    private void loadAvatarFromStorage() {
+        final String avatarUrl =
+                (new LocalPreferences(getContext())).getUser().get(Constants.USER_AVATAR);
+        if (avatarUrl != null && !avatarUrl.equals("")) {
+            getAvatarBitmap(avatarUrl);
+        } else {
+            FirebaseUser firebaseUser = mViewModel.getUser().getValue();
+            if (firebaseUser != null) {
+                Firebase.getFirebaseDatabase().child(Constants.DATABASE_NODES.AVATAR)
+                        .child(firebaseUser.getUid()).addListenerForSingleValueEvent(
+                        new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Avatar avatar = dataSnapshot.getValue(Avatar.class);
+                                if (avatar != null
+                                        && avatar.getAvatarURL() != null
+                                        && !avatar.getAvatarURL().equals("")) {
+                                    getAvatarBitmap(avatar.getAvatarURL());
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                            }
+                        });
+            }
+        }
+    }
+
+    private void getAvatarBitmap(String url) {
+        Picasso.with(getActivity())
+                .load(url)
+                .into(new Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        setAvatar(bitmap);
+                    }
+
+                    @Override
+                    public void onBitmapFailed(Drawable errorDrawable) { }
+
+                    @Override
+                    public void onPrepareLoad(Drawable placeHolderDrawable) { }
+                });
     }
 
     public void updateProfile(){
@@ -120,60 +199,10 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    private void setView() {
-        HashMap<String, String> localUser = (new LocalPreferences(getActivity())).getUser();
-        if (firebaseUser != null) {
-            nameTextView.setText(localUser.get(Constants.USER_NAME));
-            emailTextView.setText(firebaseUser.getEmail());
-
-            final String avatarUrl =
-                    (new LocalPreferences(getContext())).getUser().get(Constants.USER_AVATAR);
-            if (avatarUrl != null && !avatarUrl.equals("")) {
-                Picasso.with(getActivity())
-                        .load(avatarUrl)
-                        .fit()
-                        .centerCrop()
-                        .into(avatarImageView, new Callback() {
-                            @Override
-                            public void onSuccess() {}
-
-                            @Override
-                            public void onError() {
-                                Picasso.with(getActivity())
-                                        .load(avatarUrl)
-                                        .fit()
-                                        .centerCrop()
-                                        .networkPolicy(NetworkPolicy.OFFLINE)
-                                        .into(avatarImageView);
-                            }
-                        });
-            } else {
-                Firebase.getFirebaseDatabase().child(Constants.DATABASE_NODES.AVATAR)
-                        .child(firebaseUser.getUid()).addListenerForSingleValueEvent(
-                        new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                Avatar avatar = dataSnapshot.getValue(Avatar.class);
-                                if (avatar != null
-                                        && avatar.getAvatarURL() != null
-                                        && !avatar.getAvatarURL().equals("")) {
-                                    Picasso.with(getActivity())
-                                            .load(avatar.getAvatarURL())
-                                            .fit()
-                                            .centerCrop()
-                                            .into(avatarImageView);
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) { }
-                        });
-            }
-        }
-    }
-
     private void updateUserAvatar() {
-        if (avatarBitmap != null) {
+        final FirebaseUser firebaseUser = mViewModel.getUser().getValue();
+        Bitmap avatarBitmap = mViewModel.getAvatarBitmap().getValue();
+        if (firebaseUser != null && avatarBitmap != null) {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             avatarBitmap.compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
 
@@ -203,7 +232,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void updateUserPassword() {
-        if (!passwordTextView.getText().toString().equals("")) {
+        if (getActivity() != null && !passwordTextView.getText().toString().equals("") && isAdded()) {
             new AskPasswordDialog(getActivity()).show(new AskPasswordDialog.ActionCallback() {
                 @Override
                 public void onPositiveClick(String password) {
@@ -225,8 +254,9 @@ public class ProfileFragment extends Fragment {
     }
 
     private void requestUserPassword(String password) {
+        final FirebaseUser firebaseUser = mViewModel.getUser().getValue();
         AuthCredential authCredential = Firebase.getAuthCredential(password);
-        if (authCredential != null) {
+        if (firebaseUser != null && authCredential != null) {
             firebaseUser.reauthenticate(authCredential).addOnCompleteListener(
                     new OnCompleteListener<Void>() {
                         @Override
@@ -241,7 +271,9 @@ public class ProfileFragment extends Fragment {
                                                 } else {
                                                     int errorMessage;
                                                     try {
-                                                        throw task.getException();
+                                                        throw task.getException() != null ?
+                                                                task.getException() :
+                                                                new Exception();
                                                     } catch (FirebaseAuthWeakPasswordException e) {
                                                         errorMessage = R.string.error_register_weak_password;
                                                     } catch (Exception e) {
@@ -262,31 +294,34 @@ public class ProfileFragment extends Fragment {
     }
 
     private void updateUser() {
-        final String userName = nameTextView.getText().toString().trim();
-        final String userEmail = emailTextView.getText().toString().trim();
+        FirebaseUser firebaseUser = mViewModel.getUser().getValue();
+        if (firebaseUser != null) {
+            final String userName = nameTextView.getText().toString().trim();
+            final String userEmail = emailTextView.getText().toString().trim();
 
-        User updateUser = new User();
-        updateUser.setId(firebaseUser.getUid());
-        updateUser.setName(userName);
-        updateUser.setEmail(userEmail);
-        updateUser.save(new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-                (new LocalPreferences(getActivity())).saveUser(
-                        userName, userEmail);
+            User updateUser = new User();
+            updateUser.setId(firebaseUser.getUid());
+            updateUser.setName(userName);
+            updateUser.setEmail(userEmail);
+            updateUser.save(new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    (new LocalPreferences(getActivity())).saveUser(
+                            userName, userEmail);
 
-                requestFeedBack(R.string.success_profile_update);
-                return null;
-            }
-        });
+                    requestFeedBack(R.string.success_profile_update);
+                    return null;
+                }
+            });
+        }
     }
 
     private void requestFeedBack(int message) {
-        if (isAdded()) {
-            ((MainActivity) getActivity()).setUser();
+        if (isAdded() && getActivity() != null) {
+            ((MainActivity) getActivity()).requestUpdateUser();
             Toast.makeText(getActivity(),
                     getString(message),
-                    Toast.LENGTH_LONG ).show();
+                    Toast.LENGTH_LONG).show();
             if (dialog.isShowing()) {
                 dialog.close();
             }
@@ -294,8 +329,6 @@ public class ProfileFragment extends Fragment {
     }
 
     public void setAvatar(Bitmap avatar) {
-        avatarBitmap = avatar;
-        avatarImageView.setImageBitmap(avatar);
+        mViewModel.setAvatarBitmap(avatar);
     }
-
 }
