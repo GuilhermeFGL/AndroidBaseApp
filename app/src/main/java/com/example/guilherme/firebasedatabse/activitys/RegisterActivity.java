@@ -15,6 +15,7 @@ import com.example.guilherme.firebasedatabse.R;
 import com.example.guilherme.firebasedatabse.components.ProgressDialog;
 import com.example.guilherme.firebasedatabse.config.Constants;
 import com.example.guilherme.firebasedatabse.config.Firebase;
+import com.example.guilherme.firebasedatabse.helper.AndroidPermissions;
 import com.example.guilherme.firebasedatabse.helper.ImagePicker;
 import com.example.guilherme.firebasedatabse.helper.LocalPreferences;
 import com.example.guilherme.firebasedatabse.model.Avatar;
@@ -108,8 +109,15 @@ public class RegisterActivity extends AppCompatActivity {
 
     @OnClick(R.id.register_pic)
     public void pickImage() {
-        Intent chooseImageIntent = ImagePicker.getPickImageIntent(this);
-        startActivityForResult(chooseImageIntent, Constants.PICK_IMAGE_FOR_REGISTER);
+        if (AndroidPermissions.checkPermissions(this, Constants.PERMISSIONS.CAMERA)) {
+            startActivityForResult(
+                    ImagePicker.getPickImageIntent(this), Constants.PICK_IMAGE_FOR_REGISTER);
+        } else {
+            AndroidPermissions.requestPermission(
+                    Constants.PERMISSIONS.REQUEST_CODE_CAMERA,
+                    this,
+                    Constants.PERMISSIONS.CAMERA);
+        }
     }
 
     public void registerUser(){

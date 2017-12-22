@@ -23,6 +23,7 @@ import com.example.guilherme.firebasedatabse.components.AskPasswordDialog;
 import com.example.guilherme.firebasedatabse.components.ProgressDialog;
 import com.example.guilherme.firebasedatabse.config.Constants;
 import com.example.guilherme.firebasedatabse.config.Firebase;
+import com.example.guilherme.firebasedatabse.helper.AndroidPermissions;
 import com.example.guilherme.firebasedatabse.helper.ImagePicker;
 import com.example.guilherme.firebasedatabse.helper.LocalPreferences;
 import com.example.guilherme.firebasedatabse.model.Avatar;
@@ -115,9 +116,15 @@ public class ProfileFragment extends Fragment {
 
     @OnClick(R.id.update_pic)
     public void pickImage() {
-        if (getActivity() != null) {
+        if (getActivity() != null
+                && !AndroidPermissions.checkPermissions(getActivity(), Constants.PERMISSIONS.CAMERA)) {
             getActivity().startActivityForResult(
                     ImagePicker.getPickImageIntent(getActivity()), Constants.PICK_IMAGE_FOR_PROFILE);
+        } else {
+            AndroidPermissions.requestPermission(
+                    Constants.PERMISSIONS.REQUEST_CODE_CAMERA,
+                    getActivity(),
+                    Constants.PERMISSIONS.CAMERA);
         }
     }
 

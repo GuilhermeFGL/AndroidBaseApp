@@ -1,5 +1,7 @@
 package com.example.guilherme.firebasedatabse.config;
 
+import android.Manifest;
+
 public class Constants {
 
     private Constants() {}
@@ -25,6 +27,13 @@ public class Constants {
     public static final String DEFAULT_IMAGE_EXTENSION = ".jpg";
 
     public static final String[] FACEBOOK_LOGIN = new String[] {"email", "public_profile"};
+
+    public static final class PERMISSIONS {
+        public static final int REQUEST_CODE_CAMERA = 1007;
+        public static final String[] CAMERA = {
+                Manifest.permission.CAMERA,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    }
 
     public static final class BUNDLES {
         public static final class MAIN {
