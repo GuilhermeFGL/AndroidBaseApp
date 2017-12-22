@@ -9,11 +9,13 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.support.media.ExifInterface;
+import android.support.v4.content.FileProvider;
 
+import com.example.guilherme.firebasedatabse.BuildConfig;
 import com.example.guilherme.firebasedatabse.R;
 
 import java.io.File;
@@ -29,12 +31,18 @@ public class ImagePicker {
     public static Intent getPickImageIntent(Context context) {
         Intent chooserIntent = null;
         List<Intent> intentList = new ArrayList<>();
+
         Intent pickIntent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intentList = addIntentsToList(context, intentList, pickIntent);
+
         Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         takePhotoIntent.putExtra("return-data", true);
-        takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(getTempFile(context)));
-        intentList = addIntentsToList(context, intentList, pickIntent);
+        takePhotoIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                FileProvider.getUriForFile(context,
+                        BuildConfig.APPLICATION_ID.concat(".fileprovider"),
+                        getTempFile(context)));
         intentList = addIntentsToList(context, intentList, takePhotoIntent);
 
         if (intentList.size() > 0) {
